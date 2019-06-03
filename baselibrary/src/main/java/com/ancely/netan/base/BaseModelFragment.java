@@ -9,16 +9,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
 import com.ancely.netan.event.NetworkChangeEvent;
 import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /*
  *  @项目名：  SharingTechnology
@@ -33,9 +38,10 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
     private boolean isLazyLoad;
     private View mContentView;
     protected Context mContext;
-    private VM mViewModel;
+    protected VM mViewModel;
     public boolean currentNetStatus = false;//当前的网络连接状态
     public boolean isResevierrequest;//是否请求出现错误标记
+    protected Map<String, Object> mParams = new HashMap<>();
 
     @Override
     public void onAttach(Context context) {
@@ -97,8 +103,8 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
         isLazyLoad = lazyLoad;
     }
 
-    protected View findViewById(int id) {
-        return mContentView.findViewById(id);
+    protected <V extends View> V findViewById(int id) {
+        return (V) mContentView.findViewById(id);
     }
 
     protected abstract void loadData();
@@ -145,6 +151,7 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
     @Override
     public void accessError(RequestErrBean errBean) {
         isResevierrequest = true;
+        Toast.makeText(mContext, errBean.msg, Toast.LENGTH_SHORT).show();
     }
 
     /**

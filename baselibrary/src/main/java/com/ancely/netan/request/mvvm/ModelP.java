@@ -12,26 +12,29 @@ package com.ancely.netan.request.mvvm;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+
 import com.ancely.netan.request.NetWorkManager;
 import com.ancely.netan.request.exception.ApiException;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public abstract class ModelP<T, R> implements IBaseModelP<T> {
     public static final int IS_LOADING_MORE_DATA = 2;//加载更多数据
     private CompositeDisposable mDisposable;
     private R mRequest;
     private BaseViewModel<T> mBaseViewModel;
-    private Map<String, Object> map;
+    private Map<String, Object> params;
     private int flag;//用来判断不同请求的标识
     private static final String TAG = "AncelyModelP";
     private boolean isShowLoading;
@@ -97,13 +100,13 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     }
 
 
-    public void startRequestService(Map<String, Object> map, int flag, boolean isShowLoading) {
+    public void startRequestService(Map<String, Object> params, int flag, boolean isShowLoading) {
 
-        if (map == null) {
-            map = new HashMap<>();
+        if (params == null) {
+            params = new HashMap<>();
         }
-        start(map, flag, isShowLoading);
-        Observable<T> netObservable = getObservable(mRequest, map, flag);
+        start(params, flag, isShowLoading);
+        Observable<T> netObservable = getObservable(mRequest, params, flag);
         if (netObservable == null) {
             throw new NullPointerException("the method of getObservable  can not return null");
         }
@@ -111,7 +114,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         if (isShowLoading) {
             mBaseViewModel.getShowLoadingLiveData().setValue(flag);
         }
-        this.map = map;
+        this.params = params;
         this.flag = flag;
         this.isShowLoading = isShowLoading;
         sendRequestToServer(mRequest, netObservable, flag, isShowLoading);
@@ -121,7 +124,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
      * 重新请求当次失败的请求 比如请求失败后的一个点击请求事件
      */
     public void rerequest() {
-        startRequestService(map, flag, isShowLoading);
+        startRequestService(params, flag, isShowLoading);
     }
 
     /**

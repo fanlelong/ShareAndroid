@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.util.Linkify;
@@ -18,7 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.Checkable;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 /*
  *  @项目名：  ModlerApp
@@ -44,6 +48,10 @@ public class RViewHolder extends RecyclerView.ViewHolder {
         return new RViewHolder(itemView);
     }
 
+    public static RViewHolder createViewHolder(View view) {
+        return new RViewHolder(view);
+    }
+
     //通过ViewId获取对象
     public <T extends View> T getView(int viewId) {
         View view = mViews.get(viewId);
@@ -64,6 +72,12 @@ public class RViewHolder extends RecyclerView.ViewHolder {
         return this;
     }
 
+    public RViewHolder setText(int viewId, int resId) {
+        TextView tv = getView(viewId);
+        tv.setText(resId);
+        return this;
+    }
+
     public RViewHolder setTextByLitmit(int viewId, String text, int limit) {
         TextView tv = getView(viewId);
         tv.setTextSize(1);
@@ -76,8 +90,9 @@ public class RViewHolder extends RecyclerView.ViewHolder {
         tv.setText(text);
         return this;
     }
+
     public RViewHolder setText(@IdRes int viewId, CharSequence value) {
-        TextView view = (TextView)this.getView(viewId);
+        TextView view = (TextView) this.getView(viewId);
         view.setText(value);
         return this;
     }
@@ -226,21 +241,21 @@ public class RViewHolder extends RecyclerView.ViewHolder {
      * 关于事件的
      */
     public RViewHolder setOnClickListener(int viewId,
-                                         View.OnClickListener listener) {
+                                          View.OnClickListener listener) {
         View view = getView(viewId);
         view.setOnClickListener(listener);
         return this;
     }
 
     public RViewHolder setOnTouchListener(int viewId,
-                                         View.OnTouchListener listener) {
+                                          View.OnTouchListener listener) {
         View view = getView(viewId);
         view.setOnTouchListener(listener);
         return this;
     }
 
     public RViewHolder setOnLongClickListener(int viewId,
-                                             View.OnLongClickListener listener) {
+                                              View.OnLongClickListener listener) {
         View view = getView(viewId);
         view.setOnLongClickListener(listener);
         return this;

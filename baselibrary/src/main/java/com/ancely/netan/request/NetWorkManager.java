@@ -5,9 +5,18 @@ import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
 import com.ancely.netan.request.life.LifeManagerRetriever;
+import com.ancely.netan.request.okhttp.HttpLoggingInterceptor;
 import com.ancely.netan.request.okhttp.HttpsSSL;
 import com.ancely.netan.request.okhttp.ProgressInterceptor;
+
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -17,11 +26,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-
-import java.io.InputStream;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Zaifeng on 2018/2/28.
@@ -90,9 +94,9 @@ public class NetWorkManager {
         } else {
             this.context = context.getApplicationContext();
         }
-//        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor("ancelyOkhttp:");
-//        httpLoggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
-//        httpLoggingInterceptor.setColorLevel(Level.INFO);
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor("ancelyOkhttp:");
+        httpLoggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
+        httpLoggingInterceptor.setColorLevel(Level.INFO);
         // 初始化okhttp
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(new ProgressInterceptor())
@@ -107,7 +111,7 @@ public class NetWorkManager {
                             .build();
                     return chain.proceed(request);
                 })
-//                .addInterceptor(httpLoggingInterceptor)
+                .addInterceptor(httpLoggingInterceptor)
                 .readTimeout(60000, TimeUnit.MILLISECONDS)
                 .writeTimeout(60000, TimeUnit.MILLISECONDS)
                 .connectTimeout(60000, TimeUnit.MILLISECONDS);
@@ -116,7 +120,8 @@ public class NetWorkManager {
                 if (interceptor != null) builder.addInterceptor(interceptor);
             }
         }
-        if (sslParams != null) builder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
+        if (sslParams != null)
+            builder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
 
         mClient = builder.build();
         // 初始化Retrofit

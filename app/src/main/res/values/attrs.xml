@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <!--通用头-->
+    <declare-styleable name="BaseTitle">
+        <attr name="title" format="string"/>
+        <attr name="right_title" format="string"/>
+        <attr name="right_title_gone" format="boolean"/>
+    </declare-styleable>
+
+
+    <declare-styleable name="StrakeOutEditText">
+        <attr name="et_hint" format="string"/>
+        <attr name="left_icon" format="reference|integer"/>
+        <attr name="left_icon_visibility" format="boolean"/>
+        <attr name="input_type">
+            <enum name="textPassword" value="0" />
+            <enum name="text" value="1" />
+            <enum name="phone" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BottomView">
+        <attr name="bvText" format="string"/>
+        <attr name="bvIcon" format="reference|integer"/>
+    </declare-styleable>
+
+    <!--banner-->
+    <declare-styleable name="AutoLooperView">
+        <attr name="dotSelect" format="integer"/>
+        <attr name="dotNormal" format="integer"/>
+        <attr name="scrollSpeed" format="integer"/>
+    </declare-styleable>
+
+    <attr name="SwipeBackLayoutStyle" format="reference" />
+    <declare-styleable name="SwipeBackLayout">
+        <attr name="edge_size" format="dimension" />
+        <attr name="edge_flag">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+            <enum name="bottom" value="2" />
+            <enum name="all" value="3" />
+        </attr>
+        <attr name="shadow_left" format="reference" />
+        <attr name="shadow_right" format="reference" />
+        <attr name="shadow_bottom" format="reference" />
+    </declare-styleable>
+</resources>

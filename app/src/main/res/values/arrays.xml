@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="main">
+        <item name="main_home">技术分享</item>
+        <item name="main_categories">公众号</item>
+        <item name="main_pinpai">体系</item>
+        <item name="main_community">社区</item>
+        <item name="main_user_center">个人中心</item>
+    </string-array>
+</resources>

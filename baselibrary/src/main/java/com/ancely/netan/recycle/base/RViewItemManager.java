@@ -1,6 +1,7 @@
 package com.ancely.netan.recycle.base;
 
 import android.support.v4.util.SparseArrayCompat;
+
 import com.ancely.netan.recycle.holder.RViewHolder;
 import com.ancely.netan.recycle.listener.RViewItem;
 
@@ -16,9 +17,9 @@ public class RViewItemManager<T> {
     //styles 每添加一个证明就多一种布局就多一个viewType
     private SparseArrayCompat<RViewItem<T>> styles = new SparseArrayCompat<>();//key: viewType; value:RViewItem;
 
-    public void addSytle(RViewItem<T> item) {
+    public void addSytle(RViewItem<T> item, int headerNum) {
         if (item != null) {
-            styles.put(styles.size(), item);
+            styles.put(styles.size() + headerNum, item);
         }
 
     }

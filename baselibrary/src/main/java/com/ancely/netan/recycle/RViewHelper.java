@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
 import com.ancely.netan.recycle.base.RViewAdapter;
 import com.ancely.netan.recycle.listener.RViewCreate;
 import com.ancely.netan.recycle.listener.RViewScrollListener;
@@ -96,6 +97,9 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
 
     public void notifyAdapterDataSetChanged(List<T> datas) {
         if (datas == null) return;
+        if (mSwipeRefresh != null) {
+            mSwipeRefresh.setRefreshing(false);
+        }
         isLoadMoreFlag = datas.size() >= mPageSize && mSupportPaging;
         if (mCurrentPageNum == mStartPageNum) {
             mRecycleViewAdapter.updataDatas(datas);
