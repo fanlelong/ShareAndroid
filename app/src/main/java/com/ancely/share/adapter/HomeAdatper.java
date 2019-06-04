@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class HomeAdatper extends RViewAdapter<Article> {
     public HomeAdatper(HomeBean datas) {
-        super(datas.getDatas(), 1);
+        super(datas.getDatas());
         addItemStyle(new RViewItem<Article>() {
             @Override
             public int getItemLayout() {
@@ -71,9 +71,6 @@ public class HomeAdatper extends RViewAdapter<Article> {
         });
     }
 
-    public HomeAdatper(HomeBean datas, RViewItem<Article> item) {
-        super(datas.getDatas(), item);
-    }
 
     @Override
     public void onBindHeaderHolder(RViewHolder holder, int position, int layoutId, Object o) {

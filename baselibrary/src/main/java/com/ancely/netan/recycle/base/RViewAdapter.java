@@ -2,7 +2,10 @@ package com.ancely.netan.recycle.base;
 
 import android.support.annotation.NonNull;
 import android.support.v4.util.SparseArrayCompat;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.ancely.netan.recycle.holder.RViewHolder;
@@ -18,15 +21,16 @@ import java.util.List;
  *  @文件名:   RViewAdapter
  *  @创建者:   fanlelong
  *  @创建时间:  2019/5/21 2:03 PM
- *  @描述:    多样式item样式适配器
+ *  @描述:    多样式item样式适配器 可以添加头部和脚步
  */
 public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
     private static final int BASE_ITEM_TYPE_HEADER = 1000000;//headerview的viewtype基准值
+    private static final int BASE_ITEM_TYPE_FOOTER = 2000000;//footerView的ViewType基准值
     private RViewItemManager<T> itemStyle;//item类管理器
     private ItemListener<T> itemListener;//item点击监听
     private List<T> datas;//数据源
     private SparseArrayCompat<SparseArrayCompat> mHeaderDatas = new SparseArrayCompat<>();
-    private int headerNum;
+    private SparseArrayCompat<View> mFooterViews = new SparseArrayCompat<>();//存放FooterViews,key是viewType
 
     //单样式
     public RViewAdapter(List<T> datas) {
@@ -35,14 +39,6 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         itemStyle = new RViewItemManager<>();
     }
 
-
-    //单样式
-    public RViewAdapter(List<T> datas, int headerNum) {
-        if (datas == null) datas = new ArrayList<>();
-        this.datas = datas;
-        itemStyle = new RViewItemManager<>();
-        this.headerNum = headerNum;
-    }
 
     //多样式
     public RViewAdapter(List<T> datas, RViewItem<T> item) {
@@ -55,7 +51,7 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
 
     //增加一种新的item样式
     protected void addItemStyle(RViewItem<T> item) {
-        itemStyle.addSytle(item, headerNum);
+        itemStyle.addSytle(item);
     }
 
 
@@ -63,13 +59,13 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         holder.getContentView().setOnClickListener(v -> {
             if (itemListener != null) {
                 int position = holder.getAdapterPosition();
-                itemListener.onItemClick(v, datas.get(position), position);
+                itemListener.onItemClick(v, datas.get(position - mHeaderDatas.size()), position);
             }
         });
         holder.getContentView().setOnLongClickListener(v -> {
             if (itemListener != null) {
                 int position = holder.getAdapterPosition();
-                return itemListener.onItemLongClick(v, datas.get(position), position);
+                return itemListener.onItemLongClick(v, datas.get(position - mHeaderDatas.size()), position);
             }
             return false;
         });
@@ -82,8 +78,9 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
     public RViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         if (mHeaderDatas.get(viewType) != null) {//不为空，说明是headerview
             return RViewHolder.createViewHolder(viewGroup.getContext(), viewGroup, mHeaderDatas.get(viewType).keyAt(0));
+        } else if (mFooterViews.get(viewType) != null) {
+            return RViewHolder.createViewHolder(mFooterViews.get(viewType));
         }
-
         RViewItem item = itemStyle.getRViewItem(viewType);
         int layoutId = item.getItemLayout();
         RViewHolder holder = RViewHolder.createViewHolder(viewGroup.getContext(), viewGroup, layoutId);
@@ -97,8 +94,10 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         if (isHeaderViewPos(position)) {
             convert(holder, position);
             return;
+        } else if (isFooterViewPos(position)) {
+            return;
         }
-        convert(holder, datas.get(position - headerNum), position);
+        convert(holder, datas.get(position - mHeaderDatas.size()), position);
     }
 
     private void convert(RViewHolder holder, T t, int position) {
@@ -121,16 +120,18 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
     //根据position获取当前的样式
     @Override
     public int getItemCount() {
-        return this.datas == null ? mHeaderDatas.size() : this.datas.size() + mHeaderDatas.size();
+        return this.datas.size() + getHeaderViewCount() + getFooterViewCount();
     }
 
     @Override
     public int getItemViewType(int position) {
         if (isHeaderViewPos(position)) {
             return mHeaderDatas.keyAt(position);
+        } else if (isFooterViewPos(position)) {
+            return mFooterViews.keyAt(position - mFooterViews.size() - datas.size());
         }
         if (hasMultistyle())
-            return itemStyle.getItemViewType(datas.get(position - headerNum), position);
+            return itemStyle.getItemViewType(datas.get(position - mHeaderDatas.size()), position);
         return super.getItemViewType(position);
     }
 
@@ -165,12 +166,23 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
 
     /**
      * 传入position 判断是否是headerview
+     */
+    public boolean isHeaderViewPos(int position) {// 举例， 2 个头，pos 0 1，true， 2+ false
+        return getHeaderViewCount() > position;
+    }
+
+    /**
+     * 传入postion判断是否是footerview
      *
      * @param position
      * @return
      */
-    public boolean isHeaderViewPos(int position) {// 举例， 2 个头，pos 0 1，true， 2+ false
-        return getHeaderViewCount() > position;
+    public boolean isFooterViewPos(int position) {//举例， 2个头，2个inner，pos 0 1 2 3 ,false,4+true
+        return position >= getFooterViewCount() + datas.size();
+    }
+
+    public int getFooterViewCount() {
+        return mFooterViews.size();
     }
 
     /**
@@ -184,5 +196,65 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         SparseArrayCompat headerContainer = new SparseArrayCompat();
         headerContainer.put(layoutId, data);
         mHeaderDatas.put(mHeaderDatas.size() + BASE_ITEM_TYPE_HEADER, headerContainer);
+    }
+
+    /*
+     * 添加FooterView
+     */
+    public void addFooterView(View v) {
+        mFooterViews.put(mFooterViews.size() + BASE_ITEM_TYPE_FOOTER, v);
+    }
+
+    /**
+     * 清空HeaderView数据
+     */
+    public void clearHeaderView() {
+        mHeaderDatas.clear();
+    }
+
+    public void clearFooterView() {
+        mFooterViews.clear();
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        //为了兼容GridLayout
+        super.onAttachedToRecyclerView(recyclerView);
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+        if (layoutManager instanceof GridLayoutManager) {
+            final GridLayoutManager gridLayoutManager = (GridLayoutManager) layoutManager;
+            final GridLayoutManager.SpanSizeLookup spanSizeLookup = gridLayoutManager.getSpanSizeLookup();
+
+            gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                @Override
+                public int getSpanSize(int position) {
+                    int viewType = getItemViewType(position);
+                    if (mHeaderDatas.get(viewType) != null) {
+                        return gridLayoutManager.getSpanCount();
+                    } else if (mFooterViews.get(viewType) != null) {
+                        return gridLayoutManager.getSpanCount();
+                    }
+                    if (spanSizeLookup != null)
+                        return spanSizeLookup.getSpanSize(position);
+                    return 1;
+                }
+            });
+            gridLayoutManager.setSpanCount(gridLayoutManager.getSpanCount());
+        }
+    }
+
+    @Override
+    public void onViewAttachedToWindow(@NonNull RViewHolder holder) {
+        super.onViewAttachedToWindow(holder);
+        int position = holder.getLayoutPosition();
+        if (isHeaderViewPos(position) || isFooterViewPos(position)) {
+            ViewGroup.LayoutParams lp = holder.itemView.getLayoutParams();
+
+            if (lp instanceof StaggeredGridLayoutManager.LayoutParams) {
+
+                StaggeredGridLayoutManager.LayoutParams p = (StaggeredGridLayoutManager.LayoutParams) lp;
+                p.setFullSpan(true);
+            }
+        }
     }
 }
