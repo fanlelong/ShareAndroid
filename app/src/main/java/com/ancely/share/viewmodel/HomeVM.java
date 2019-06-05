@@ -6,6 +6,7 @@ import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
+import com.ancely.share.bean.HomeCollectBean;
 
 import java.util.List;
 
@@ -27,7 +28,16 @@ public class HomeVM extends BaseViewModel<HttpResult<HomeBean>> {
         return homeBannle;
     }
 
+    public MediatorLiveData<HomeCollectBean> getColleclLiveData() {
+
+        if (null == colleclLiveData) {
+            colleclLiveData = new MediatorLiveData<>();
+        }
+        return colleclLiveData;
+    }
+
     private MediatorLiveData<List<HomeBanner>> homeBannle;
+    private MediatorLiveData<HomeCollectBean> colleclLiveData;
 
 
 }

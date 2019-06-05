@@ -1,6 +1,5 @@
 package com.ancely.share.others;
 
-import com.ancely.share.ShareApplication;
 import com.ancely.share.utils.PreferenceUtils;
 
 import java.util.Arrays;
@@ -50,10 +49,10 @@ public class HttpConstant {
         if (requestUrl == null) {
             return;
         }
-        PreferenceUtils.saveString(ShareApplication.getInstance(), requestUrl, cookie);
+        PreferenceUtils.saveString(requestUrl, cookie);
         if (domain == null) {
             return;
         }
-        PreferenceUtils.saveString(ShareApplication.getInstance(), domain, cookie);
+        PreferenceUtils.saveString( domain, cookie);
     }
 }

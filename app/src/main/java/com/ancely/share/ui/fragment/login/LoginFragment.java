@@ -112,9 +112,9 @@ public class LoginFragment extends BaseModelFragment<LoginVM, HttpResult<LoginBe
     public void accessSuccess(ResponseBean<HttpResult<LoginBean>> responseBean) {
         super.accessSuccess(responseBean);
         LoginBean loginBean = responseBean.body.getData();
-        PreferenceUtils.saveString(getContext(), "userId", String.valueOf(loginBean.getId()));
-        PreferenceUtils.saveString(getContext(), "userName", loginBean.getUsername());
-        PreferenceUtils.saveBoolean(getContext(), "userName", true);
+        PreferenceUtils.saveString("userId", String.valueOf(loginBean.getId()));
+        PreferenceUtils.saveString( "userName", loginBean.getUsername());
+        PreferenceUtils.saveBoolean( "userName", true);
         startActivity(new Intent(getContext(), MainActivity.class));
         getActivity().finish();
     }

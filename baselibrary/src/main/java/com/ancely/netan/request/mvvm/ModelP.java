@@ -117,7 +117,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         this.params = params;
         this.flag = flag;
         this.isShowLoading = isShowLoading;
-        sendRequestToServer(mRequest, netObservable, flag, isShowLoading);
+        sendRequestToServer(mRequest, netObservable, flag,params, isShowLoading);
     }
 
     /**
@@ -134,8 +134,8 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
 
     }
 
-    private void sendRequestToServer(R request, Observable<T> netObservable, int flag, boolean isShowLoading) {
-        Observable<T> cacheObservable = Observable.create(emitter -> handlerFirstObservable(emitter, request, flag));
+    private void sendRequestToServer(R request, Observable<T> netObservable, int flag, Map<String, Object> params, boolean isShowLoading) {
+        Observable<T> cacheObservable = Observable.create(emitter -> handlerFirstObservable(emitter, request,params, flag));
 
         Observable<T> concat = Observable.concat(cacheObservable, netObservable);
 
@@ -180,6 +180,9 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         this.startRequestService(map, 1);
     }
 
+    public void startRequestService() {
+        this.startRequestService(null, 1);
+    }
     protected abstract Observable<T> getObservable(R request, Map<String, Object> map, int flag);
 
 
@@ -218,7 +221,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     /**
      * 请求前,可做一些相应的操作
      */
-    public void handlerFirstObservable(ObservableEmitter<T> emitter, R request, int flag) {
+    public void handlerFirstObservable(ObservableEmitter<T> emitter, R request, Map<String, Object> params, int flag) {
         emitter.onComplete(); // 只有执行onComplete才会进入到另一个
     }
 

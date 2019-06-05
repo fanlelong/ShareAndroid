@@ -33,4 +33,13 @@
     <string name="top_tip">置顶</string>
     <string name="action_search">搜索</string>
     <string name="tip_double_click_exit">再次点击退出</string>
+    <string name="collecl_failed">收藏失败</string>
+    <string name="cancel_collecl_failed">取消收藏失败</string>
+    <string name="collecl_success">收藏成功</string>
+    <string name="cancel_collecl_success">取消收藏成功</string>
+    <string name="search">Search</string>
+    <string name="search_key">请输入关键字..</string>
+    <string name="searc_hot">热门搜索</string>
+    <string name="searc_history">搜索历史</string>
+    <string name="delete_history">全部清空</string>
 </resources>

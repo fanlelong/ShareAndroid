@@ -67,6 +67,13 @@ public class HomeAdatper extends RViewAdapter<Article> {
                 } else {
                     holder.setText(R.id.item_frg_project_tv, R.string.new_fresh);
                 }
+                ImageView like = holder.getView(R.id.item_frg_home_like_iv);
+                like.setImageResource(entry.isCollect() ? R.drawable.ic_like : R.drawable.ic_like_not);
+                like.setOnClickListener(v -> {
+                    if (mListener != null) {
+                        mListener.onColleclClickListener(entry,entry.getId(), position);
+                    }
+                });
             }
         });
     }
@@ -96,5 +103,15 @@ public class HomeAdatper extends RViewAdapter<Article> {
                 return imageView;
             }
         });
+    }
+
+    private ColleclClickListener mListener;
+
+    public void setColleclClickListener(ColleclClickListener l) {
+        this.mListener = l;
+    }
+
+    public interface ColleclClickListener {
+        void onColleclClickListener(Article article, int colleckId, int position);
     }
 }

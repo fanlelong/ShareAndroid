@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.ancely.netan.request.cookie.CookieManger;
 import com.ancely.netan.request.life.LifeManagerRetriever;
 import com.ancely.netan.request.okhttp.HttpLoggingInterceptor;
 import com.ancely.netan.request.okhttp.HttpsSSL;
@@ -120,6 +121,8 @@ public class NetWorkManager {
                 if (interceptor != null) builder.addInterceptor(interceptor);
             }
         }
+        builder.cookieJar(new CookieManger(getContext()))
+                .retryOnConnectionFailure(true);
         if (sslParams != null)
             builder.sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager);
 

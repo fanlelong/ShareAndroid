@@ -4,6 +4,7 @@ import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.Article;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
+import com.ancely.share.bean.HotTipsBean;
 import com.ancely.share.bean.LoginBean;
 
 import java.util.List;
@@ -49,4 +50,13 @@ public interface ShareApi {
 
     @GET("banner/json")
     Observable<HttpResult<List<HomeBanner>>> getBanner();
+
+    @POST("lg/collect/{id}/json")
+    Observable<HttpResult<String>> collect(@Path("id") int collectId);
+
+    @POST("lg/uncollect_originId/{id}/json")
+    Observable<HttpResult<String>> cancelCollect(@Path("id") int collectId);
+
+    @GET("hotkey/json")
+    Observable<HttpResult<List<HotTipsBean>>> getHotTips();
 }

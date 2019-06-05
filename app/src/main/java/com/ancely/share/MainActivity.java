@@ -1,5 +1,6 @@
 package com.ancely.share;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -8,10 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.ancely.netan.base.BaseModelActivity;
 import com.ancely.share.adapter.ViewPagerAdapter;
+import com.ancely.share.ui.activity.SearchActivity;
 import com.ancely.share.ui.fragment.home.HomeFragment;
 import com.ancely.share.views.BottomView;
 import com.ancely.share.views.banner.CustomViewpager;
@@ -152,7 +153,7 @@ public class MainActivity extends BaseModelActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                Toast.makeText(mContext, R.string.action_search, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, SearchActivity.class));
                 break;
         }
         return super.onOptionsItemSelected(item);

@@ -1,7 +1,6 @@
 package com.ancely.share.ui.fragment.home;
 
-import android.arch.lifecycle.Observer;
-import android.support.annotation.Nullable;
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +19,8 @@ import com.ancely.share.bean.Article;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
 import com.ancely.share.model.HomeModelP;
+import com.ancely.share.ui.activity.LoginActivity;
+import com.ancely.share.utils.PreferenceUtils;
 import com.ancely.share.viewmodel.HomeVM;
 
 import java.util.ArrayList;
@@ -58,14 +59,24 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
         mAdatper = new HomeAdatper(datas);
         mModelP = new HomeModelP(this, HomeVM.class);
         mAdatper.addHeaderView(R.layout.item_banner, bannerDatas);
-        mViewModel.getHomeBanner().observe(this, new Observer<List<HomeBanner>>() {
-            @Override
-            public void onChanged(@Nullable List<HomeBanner> homeBanners) {
-                if (homeBanners != null && homeBanners.size() > 0) {
-                    bannerDatas.clear();
-                    bannerDatas.addAll(homeBanners);
-                    mAdatper.notifyItemChanged(0);
-                }
+        mViewModel.getHomeBanner().observe(this, homeBanners -> {
+            if (homeBanners != null && homeBanners.size() > 0) {
+                bannerDatas.clear();
+                bannerDatas.addAll(homeBanners);
+                mAdatper.notifyItemChanged(0);
+            }
+        });
+        mViewModel.getColleclLiveData().observe(this, collectBean -> {
+            if (collectBean == null) return;
+            if (collectBean.errorCode == -1001) {
+                startActivity(new Intent(getContext(), LoginActivity.class));
+            } else if (collectBean.errorCode != 0) {
+                Toast.makeText(getContext(), collectBean.isCollect ? R.string.cancel_collecl_failed : R.string.collecl_failed, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getContext(), collectBean.isCollect ? R.string.cancel_collecl_success : R.string.collecl_success, Toast.LENGTH_SHORT).show();
+                List<Article> datas1 = mAdatper.getDatas();
+                datas1.get(collectBean.position - mAdatper.getHeaderViewCount()).setCollect(!collectBean.isCollect);
+                mAdatper.notifyItemChanged(collectBean.position);
             }
         });
     }
@@ -83,7 +94,19 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
                 return false;
             }
         });
+        mAdatper.setColleclClickListener((article, colleckId, position) -> {
+            boolean userNmae = PreferenceUtils.getBoolean("userName");
+            if (!userNmae) {
+                startActivity(new Intent(getContext(), LoginActivity.class));
+            } else {
+                params.put("id", colleckId);
+                params.put("position", position);
+                params.put("isCollect", article.isCollect());
+                mModelP.startRequestService(params, 4);
+            }
+        });
     }
+
 
     @Override
     protected int getContentView() {

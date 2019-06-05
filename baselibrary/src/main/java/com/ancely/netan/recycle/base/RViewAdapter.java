@@ -39,6 +39,9 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         itemStyle = new RViewItemManager<>();
     }
 
+    public List<T> getDatas() {
+        return datas;
+    }
 
     //多样式
     public RViewAdapter(List<T> datas, RViewItem<T> item) {

@@ -12,6 +12,7 @@ import com.ancely.share.base.BaseModelP;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
+import com.ancely.share.bean.HomeCollectBean;
 import com.ancely.share.viewmodel.HomeVM;
 
 import org.jetbrains.annotations.NotNull;
@@ -57,9 +58,32 @@ public class HomeModelP extends BaseModelP<HomeBean> {
     }
 
     @Override
-    public void handlerFirstObservable(ObservableEmitter<HttpResult<HomeBean>> emitter, ShareApi request, int flag) {
+    public void handlerFirstObservable(ObservableEmitter<HttpResult<HomeBean>> emitter, ShareApi request, Map<String, Object> params, int flag) {
         if (flag == IS_LOADING_MORE_DATA) {
-            super.handlerFirstObservable(emitter, request, flag);
+            super.handlerFirstObservable(emitter, request, params, flag);
+            return;
+        }
+        if (flag == 4) {
+            int id = (int) params.get("id");
+            int position = (int) params.get("position");
+            boolean isCollect = (boolean) params.get("isCollect");
+            Observable<HttpResult<String>> collect;
+            if (!isCollect) {
+                collect = request.collect(id);
+            } else {
+                collect = request.cancelCollect(id);
+            }
+            HomeVM homeVM = ViewModelProviders.of(mFragment).get(HomeVM.class);
+            disposable(collect.compose(ResultTransformer.handleResult()).subscribe(t -> {
+                if (t != null) {
+
+                    int errorCode = t.getErrorCode();
+                    HomeCollectBean collectBean = new HomeCollectBean(errorCode, position, isCollect);
+                    homeVM.getColleclLiveData().postValue(collectBean);
+                }
+            }, throwable -> {
+                homeVM.getColleclLiveData().postValue(new HomeCollectBean(-1, position, isCollect));
+            }));
             return;
         }
         Observable<HttpResult<List<HomeBanner>>> banner = request.getBanner();

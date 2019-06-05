@@ -3,7 +3,6 @@ package com.ancely.share.others;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
-import com.ancely.share.ShareApplication;
 import com.ancely.share.utils.PreferenceUtils;
 
 import java.io.IOException;
@@ -32,7 +31,7 @@ public class HeaderInterceptor implements Interceptor {
         if (TextUtils.isEmpty(domain) && url.contains(HttpConstant.COLLECTIONS_WEBSITE) || url.contains(HttpConstant.UNCOLLECTIONS_WEBSITE)
                 || url.contains(HttpConstant.ARTICLE_WEBSITE)
                 || url.contains(HttpConstant.TODO_WEBSITE)) {
-            String cookie = PreferenceUtils.getString(ShareApplication.getInstance(), domain);
+            String cookie = PreferenceUtils.getString( domain);
             if (TextUtils.isEmpty(cookie)) {
                 builder.addHeader(HttpConstant.COOKIE_NAME, cookie);
             }
