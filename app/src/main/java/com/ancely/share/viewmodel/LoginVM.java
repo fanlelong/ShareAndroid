@@ -1,7 +1,6 @@
 package com.ancely.share.viewmodel;
 
-import com.ancely.netan.request.mvvm.BaseViewModel;
-import com.ancely.share.base.HttpResult;
+import com.ancely.share.base.BaseResultVM;
 import com.ancely.share.bean.LoginBean;
 
 /*
@@ -12,5 +11,5 @@ import com.ancely.share.bean.LoginBean;
  *  @创建时间:  2019/5/31 7:30 PM
  *  @描述：    TODO
  */
-public class LoginVM extends BaseViewModel<HttpResult<LoginBean>> {
+public class LoginVM extends BaseResultVM<LoginBean> {
 }

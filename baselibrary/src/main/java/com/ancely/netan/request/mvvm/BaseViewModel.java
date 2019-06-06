@@ -9,9 +9,13 @@ package com.ancely.netan.request.mvvm;
  *  @描述：    viewmodel基类
  */
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.paging.LivePagedListBuilder;
+import android.arch.paging.PagedList;
+
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.google.gson.Gson;
@@ -23,7 +27,7 @@ public class BaseViewModel<T> extends ViewModel implements IBaseViewModel<T> {
     private MutableLiveData<RequestErrBean> errorLiveData;
     private MutableLiveData<Integer> showLoadingLiveData;
     private MutableLiveData<Integer> hideLoadingLiveData;
-    //    private LiveData<PagedList<Object>> mPagedListLiveData;
+        private LiveData<PagedList<Object>> mPagedListLiveData;
     private final Gson mGson = new Gson();
 
 
@@ -39,17 +43,17 @@ public class BaseViewModel<T> extends ViewModel implements IBaseViewModel<T> {
         return resultLiveData;
     }
 
-    //    public LiveData<PagedList<Object>> getPagedListLiveData(){
-//
-//        if (null == mPagedListLiveData) {
-//            PagedList.Config config = new PagedList.Config.Builder().setPageSize(20).setPrefetchDistance(2).setInitialLoadSizeHint(14)
-//                    .setEnablePlaceholders(false)
-//                    .build();
-//            mPagedListLiveData = new LivePagedListBuilder<>(new PageDataFactory<>(), config).build();
-//        }
-//
-//        return mPagedListLiveData;
-//    }
+        public LiveData<PagedList<Object>> getPagedListLiveData(){
+
+        if (null == mPagedListLiveData) {
+            PagedList.Config config = new PagedList.Config.Builder().setPageSize(20).setPrefetchDistance(2).setInitialLoadSizeHint(14)
+                    .setEnablePlaceholders(false)
+                    .build();
+            mPagedListLiveData = new LivePagedListBuilder<>(new PageDataFactory<>(), config).build();
+        }
+
+        return mPagedListLiveData;
+    }
     @Override
     public MutableLiveData<ResponseBean<T>> getMoreLiveData() {
         if (null == moreLiveData) {

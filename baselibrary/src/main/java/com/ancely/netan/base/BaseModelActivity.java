@@ -32,7 +32,7 @@ import org.greenrobot.eventbus.ThreadMode;
  *  @描述：    请求Activity基类
  */
 public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends AppCompatActivity implements View.OnClickListener, iBaesView<T> {
-    protected Context mContext;
+    public Context mContext;
     private boolean mIsFirstInto;//是否第一次进入界面
     private NetWorkConnectReceiver mNetWorkConnectReceiver;
     private boolean mCurrentNetStatus = true;//当前的网络连接状态

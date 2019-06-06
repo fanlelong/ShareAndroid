@@ -7,10 +7,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ancely.netan.base.BaseModelFragment;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.share.MainActivity;
 import com.ancely.share.R;
+import com.ancely.share.base.BaseFragment;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.LoginBean;
 import com.ancely.share.model.LoginModelP;
@@ -29,7 +29,7 @@ import androidx.navigation.Navigation;
  *  @创建时间:  2019/5/31 3:23 PM
  *  @描述：    TODO
  */
-public class LoginFragment extends BaseModelFragment<LoginVM, HttpResult<LoginBean>> implements StrakeOutEditText.EditextChangedListener {
+public class LoginFragment extends BaseFragment<LoginVM, LoginBean> implements StrakeOutEditText.EditextChangedListener {
     private LoginModelP mModelP;
     private StrakeOutEditText mFragLoginUsername;
     private StrakeOutEditText mFragLoginPassword;

@@ -44,10 +44,10 @@ public class MainActivity extends BaseModelActivity {
         mainString = getResources().getStringArray(R.array.main);
         mFragments = new ArrayList<>();
         mFragments.add(new HomeFragment());
-        mFragments.add(new HomeFragment());
-        mFragments.add(new HomeFragment());
-        mFragments.add(new HomeFragment());
-        mFragments.add(new HomeFragment());
+//        mFragments.add(new HomeFragment());
+//        mFragments.add(new HomeFragment());
+//        mFragments.add(new HomeFragment());
+//        mFragments.add(new HomeFragment());
         mActMainVp.setPagingEnabled(false);
         mActMainVp.setOffscreenPageLimit(4);
         mActMainVp.setAdapter(new ViewPagerAdapter(getSupportFragmentManager(), mFragments));

@@ -1,5 +1,9 @@
 package com.ancely.share.bean;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 /*
  *  @项目名：  ShareAndroid
  *  @包名：    com.ancely.share.bean
@@ -8,6 +12,7 @@ package com.ancely.share.bean;
  *  @创建时间:  2019/6/5 4:19 PM
  *  @描述：    热门搜索
  */
+@Entity(tableName = "hot_tips")
 public class HotTipsBean {
     /**
      * id : 6
@@ -17,10 +22,15 @@ public class HotTipsBean {
      * visible : 1
      */
 
+    @PrimaryKey
     private int id;
+    @ColumnInfo(name = "link")
     private String link;
+    @ColumnInfo(name = "name")
     private String name;
+    @ColumnInfo(name = "order")
     private int order;
+    @ColumnInfo(name = "visible")
     private int visible;
 
     public int getId() {

@@ -15,19 +15,26 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ancely.netan.base.BaseModelActivity;
+import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.netan.request.utils.LogUtils;
 import com.ancely.share.R;
+import com.ancely.share.base.BaseActivity;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.HotTipsBean;
+import com.ancely.share.database.AppDatabase;
 import com.ancely.share.model.HotTipsModelP;
 import com.ancely.share.utils.DrawableUtils;
 import com.ancely.share.utils.SizeUtils;
 import com.ancely.share.viewmodel.HotTipsVM;
 import com.ancely.share.views.FlowLayout;
 
+import java.util.Collections;
 import java.util.List;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /*
  *  @项目名：  ShareAndroid
@@ -35,9 +42,9 @@ import java.util.List;
  *  @文件名:   SearchActivity
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/4 6:00 PM
- *  @描述：    TODO
+ *  @描述：    搜索界面
  */
-public class SearchActivity extends BaseModelActivity<HotTipsVM, HttpResult<List<HotTipsBean>>> {
+public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
     private Toolbar mActMainToolbar;
     private SearchView mSearchView;
     private HotTipsModelP mModelP;
@@ -54,6 +61,7 @@ public class SearchActivity extends BaseModelActivity<HotTipsVM, HttpResult<List
     protected Class<HotTipsVM> initClazz() {
         return HotTipsVM.class;
     }
+
 
     @Override
     protected void initDatas() {
@@ -168,5 +176,20 @@ public class SearchActivity extends BaseModelActivity<HotTipsVM, HttpResult<List
             textView.setText(s.getName());
             mActSearchHotFll.addView(textView);
         }
+    }
+
+    @Override
+    public void accessError(RequestErrBean errBean) {
+        super.accessError(errBean);
+        Single<List<HotTipsBean>> hotTips = AppDatabase.getInstance(this).getHotTipsDao().getAll();
+        mModelP.disposable(hotTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(hotTip -> {
+            Collections.reverse(hotTip);
+            addTextView(hotTip);
+            mActSearchHotFll.setOnChildClickListener(view -> {
+                int index = mActSearchHotFll.indexOfChild(view);
+                String name = hotTip.get(index).getName();
+                Toast.makeText(mContext, name, Toast.LENGTH_SHORT).show();
+            });
+        }));
     }
 }

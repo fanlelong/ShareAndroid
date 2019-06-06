@@ -1,5 +1,9 @@
 package com.ancely.share.bean;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 /*
  *  @项目名：  ShareAndroid
  *  @包名：    com.ancely.share.bean
@@ -8,6 +12,7 @@ package com.ancely.share.bean;
  *  @创建时间:  2019/6/3 11:00 AM
  *  @描述：    首页BANNER
  */
+@Entity(tableName = "home_banner")
 public class HomeBanner {
     /**
      * desc : Android高级进阶直播课免费学习
@@ -21,13 +26,21 @@ public class HomeBanner {
      * url : https://url.163.com/4bj
      */
 
+    @ColumnInfo(name = "desc")
     private String desc;
+    @PrimaryKey
     private int id;
+    @ColumnInfo(name = "image_path")
     private String imagePath;
+    @ColumnInfo(name = "isVisible")
     private int isVisible;
+    @ColumnInfo(name = "order")
     private int order;
+    @ColumnInfo(name = "title")
     private String title;
+    @ColumnInfo(name = "type")
     private int type;
+    @ColumnInfo(name = "url")
     private String url;
 
     public String getDesc() {

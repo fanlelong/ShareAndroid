@@ -2,17 +2,19 @@ package com.ancely.share.model;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
 import com.ancely.netan.request.exception.ApiException;
-import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.ResultTransformer;
 import com.ancely.share.ShareApi;
+import com.ancely.share.ShareApplication;
 import com.ancely.share.base.BaseModelP;
 import com.ancely.share.base.HttpResult;
+import com.ancely.share.base.BaseResultVM;
+import com.ancely.share.bean.Article;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
 import com.ancely.share.bean.HomeCollectBean;
+import com.ancely.share.database.AppDatabase;
 import com.ancely.share.viewmodel.HomeVM;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,13 +37,9 @@ public class HomeModelP extends BaseModelP<HomeBean> {
 
     private Fragment mFragment;
 
-    public HomeModelP(@NotNull Fragment fragment, Class<? extends BaseViewModel<HttpResult<HomeBean>>> clazz) {
+    public HomeModelP(@NotNull Fragment fragment, Class<? extends BaseResultVM<HomeBean>> clazz) {
         super(fragment, clazz);
-        this.mFragment = fragment;
-    }
-
-    public HomeModelP(FragmentActivity activity, Class<? extends BaseViewModel<HttpResult<HomeBean>>> clazz) {
-        super(activity, clazz);
+        mFragment = fragment;
     }
 
     @Override
@@ -51,8 +49,12 @@ public class HomeModelP extends BaseModelP<HomeBean> {
             return request.getArticles((pageNum));
         }
         return Observable.zip(request.getTopArticles(), request.getArticles(pageNum), (topArticle, homeBeanHttpResult) -> {
+            for (Article article : topArticle.getData()) {
+                article.setTop(true);
+            }
             topArticle.getData().addAll(homeBeanHttpResult.getData().getDatas());
             homeBeanHttpResult.getData().setDatas(topArticle.getData());
+            AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().insertAll(topArticle.getData());
             return homeBeanHttpResult;
         });
     }
@@ -91,6 +93,7 @@ public class HomeModelP extends BaseModelP<HomeBean> {
             if (t != null) {
                 HomeVM homeVM = ViewModelProviders.of(mFragment).get(HomeVM.class);
                 homeVM.getHomeBanner().postValue(t.getData());
+                AppDatabase.getInstance(ShareApplication.getInstance()).getBannerDao().insertAll(t.getData());
             }
             emitter.onComplete();
         }, throwable -> {

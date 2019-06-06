@@ -4,8 +4,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.ancely.netan.base.BaseModelFragment;
 import com.ancely.share.R;
+import com.ancely.share.base.BaseFragment;
 import com.ancely.share.ui.activity.LoginActivity;
 import com.ancely.share.views.StrakeOutEditText;
 
@@ -19,7 +19,7 @@ import androidx.navigation.Navigation;
  *  @创建时间:  2019/5/31 4:53 PM
  *  @描述：    验证码登陆
  */
-public class CodeLoginFragment extends BaseModelFragment {
+public class CodeLoginFragment extends BaseFragment {
     private StrakeOutEditText mFragLoginUsername;
     private StrakeOutEditText mFragLoginPassword;
     private TextView mFragCodeCode;

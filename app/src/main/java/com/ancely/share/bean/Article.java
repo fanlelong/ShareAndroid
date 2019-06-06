@@ -1,5 +1,10 @@
 package com.ancely.share.bean;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
 import java.util.List;
 
 /*
@@ -8,32 +13,68 @@ import java.util.List;
  *  @文件名:   Article
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/2 3:55 PM
+ *  @描述：    文章列表
  */
+@Entity(tableName = "article")
 public class Article {
+    @ColumnInfo(name = "apk_link")
     private String apkLink;
+    @ColumnInfo(name = "author")
     private String author;
+    @ColumnInfo(name = "chapter_id")
     private int chapterId;
+    @ColumnInfo(name = "chapter_name")
     private String chapterName;
+    @Ignore
     private boolean collect;
+    @ColumnInfo(name = "courseId")
     private int courseId;
+    @ColumnInfo(name = "desc")
     private String desc;
+    @ColumnInfo(name = "envelopePic")
     private String envelopePic;
-    private boolean fresh;
+    @ColumnInfo(name = "fresh")
+    private boolean fresh;//是否新文章
+    @PrimaryKey
     private int id;
+    @ColumnInfo(name = "link")
     private String link;
+    @ColumnInfo(name = "nic_date")
     private String niceDate;
+    @ColumnInfo(name = "origin")
     private String origin;
+    @ColumnInfo(name = "prefix")
     private String prefix;
+    @ColumnInfo(name = "project_link")
     private String projectLink;
+    @ColumnInfo(name = "publish_time")
     private long publishTime;
+    @ColumnInfo(name = "super_chapter_id")
     private int superChapterId;
+    @ColumnInfo(name = "super_chapter_name")
     private String superChapterName;
+    @ColumnInfo(name = "title")
     private String title;
+    @ColumnInfo(name = "type")
     private int type;
+    @ColumnInfo(name = "user_id")
     private int userId;
+    @ColumnInfo(name = "visible")
     private int visible;
+    @ColumnInfo(name = "zan")
     private int zan;
+    @Ignore
     private List<Tags> tags;
+    @ColumnInfo(name = "is_top")
+    private boolean isTop;
+
+    public void setTop(boolean top) {
+        isTop = top;
+    }
+
+    public boolean isTop() {
+        return isTop;
+    }
 
     public String getApkLink() {
         return apkLink;
@@ -227,9 +268,9 @@ public class Article {
         this.tags = tags;
     }
 
-    public static class Tags{
-       private String name;
-       private String url;
+    public static class Tags {
+        private String name;
+        private String url;
 
         public String getName() {
             return name;

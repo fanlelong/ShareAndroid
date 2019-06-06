@@ -57,12 +57,12 @@ public class HomeAdatper extends RViewAdapter<Article> {
                     ImageView image = holder.getView(R.id.item_frg_home_icon_tv);
                     Glide.with(image).load(entry.getEnvelopePic()).into(image);
                 }
-                if (entry.getType() == 1) {//置顶
+                if (entry.isTop()) {//置顶
                     holder.setVisible(R.id.item_frg_home_tv, true);
                 } else if (entry.getType() == 0) {
                     holder.setVisible(R.id.item_frg_home_tv, false);
                 }
-                if (entry.getTags().size() > 0) {
+                if (entry.getTags() != null && entry.getTags().size() > 0) {
                     holder.setText(R.id.item_frg_project_tv, entry.getTags().get(0).getName());
                 } else {
                     holder.setText(R.id.item_frg_project_tv, R.string.new_fresh);
@@ -71,7 +71,7 @@ public class HomeAdatper extends RViewAdapter<Article> {
                 like.setImageResource(entry.isCollect() ? R.drawable.ic_like : R.drawable.ic_like_not);
                 like.setOnClickListener(v -> {
                     if (mListener != null) {
-                        mListener.onColleclClickListener(entry,entry.getId(), position);
+                        mListener.onColleclClickListener(entry, entry.getId(), position);
                     }
                 });
             }

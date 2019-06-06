@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.ancely.netan.recycle.base.RViewAdapter;
 import com.ancely.netan.recycle.listener.ItemListener;
 import com.ancely.netan.request.mvvm.ModelP;
+import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.share.R;
 import com.ancely.share.adapter.HomeAdatper;
@@ -18,15 +19,21 @@ import com.ancely.share.base.RViewFragment;
 import com.ancely.share.bean.Article;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
+import com.ancely.share.database.AppDatabase;
 import com.ancely.share.model.HomeModelP;
 import com.ancely.share.ui.activity.LoginActivity;
 import com.ancely.share.utils.PreferenceUtils;
 import com.ancely.share.viewmodel.HomeVM;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 /*
  *  @项目名：  ShareAndroid
@@ -47,6 +54,7 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
 
     @Override
     protected void loadData() {
+
         requestDatasFromServer(false);
     }
 
@@ -179,5 +187,31 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
             return;
         }
         mModelP.startRequestService(params);
+    }
+
+    @Override
+    public void accessError(RequestErrBean errBean) {
+        super.accessError(errBean);
+        if (errBean.flag != ModelP.IS_LOADING_MORE_DATA) {
+            Single<List<Article>> articleTopAll = AppDatabase.getInstance(getContext()).articleDao().getArticleTopAll();
+            Single<List<Article>> articleAll = AppDatabase.getInstance(getContext()).articleDao().getArticleAll();
+            Single<List<HomeBanner>> banners = AppDatabase.getInstance(getContext()).getBannerDao().getBanners();
+
+            List<Article> article = new ArrayList<>();
+            mModelP.disposable(Single.concat(articleTopAll, articleAll).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(articles -> {
+                Collections.reverse(articles);
+                article.addAll(articles);
+                notifyAdapterDataSetChanged(article);
+            }));
+
+            mModelP.disposable(banners.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(homeBanners -> {
+                Collections.reverse(homeBanners);
+                if (homeBanners != null && homeBanners.size() > 0 && bannerDatas.size() == 0) {
+                    bannerDatas.clear();
+                    bannerDatas.addAll(homeBanners);
+                    mAdatper.notifyItemChanged(0);
+                }
+            }));
+        }
     }
 }

@@ -17,6 +17,7 @@ import com.ancely.netan.request.NetWorkManager;
 import com.ancely.netan.request.exception.ApiException;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
+import com.ancely.netan.utils.NetUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -117,7 +118,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         this.params = params;
         this.flag = flag;
         this.isShowLoading = isShowLoading;
-        sendRequestToServer(mRequest, netObservable, flag,params, isShowLoading);
+        sendRequestToServer(mRequest, netObservable, flag, params, isShowLoading);
     }
 
     /**
@@ -135,10 +136,13 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     }
 
     private void sendRequestToServer(R request, Observable<T> netObservable, int flag, Map<String, Object> params, boolean isShowLoading) {
-        Observable<T> cacheObservable = Observable.create(emitter -> handlerFirstObservable(emitter, request,params, flag));
+        Observable<T> cacheObservable = Observable.create(emitter -> handlerFirstObservable(emitter, request, params, flag));
 
         Observable<T> concat = Observable.concat(cacheObservable, netObservable);
-
+        if (!NetUtils.isConnected(NetWorkManager.getInstance().getContext())) {
+            accessError(404, "网络异常,请尝试切换其它网络..", flag, isShowLoading);
+            return;
+        }
         disposable(concat.retryWhen(new RetryWithDelay(retryCount, retryTime))
                 .compose(getTransformer())
                 .compose(SchedulerProvider.getInstance().applySchedulers())
@@ -183,6 +187,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     public void startRequestService() {
         this.startRequestService(null, 1);
     }
+
     protected abstract Observable<T> getObservable(R request, Map<String, Object> map, int flag);
 
 

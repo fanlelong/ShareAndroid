@@ -30,12 +30,12 @@ public class FlowLayout extends ViewGroup {
     /**
      * View和View的左边距的默认值
      */
-    public static int NORMOL_MARGIN_LEFT = SizeUtils.px2dp(10);
+    public static int NORMOL_MARGIN_LEFT = SizeUtils.px2dp(14);
 
     /**
      * 行与行之间的间距的默认值
      */
-    public static int NORMOL_MARGIN_TOP = SizeUtils.px2dp(10);
+    public static int NORMOL_MARGIN_TOP = SizeUtils.px2dp(12);
     private GradientDrawable mNormolDrawable;
 
     public FlowLayout(Context context) {

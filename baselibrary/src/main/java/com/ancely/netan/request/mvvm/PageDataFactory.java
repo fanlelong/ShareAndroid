@@ -9,15 +9,27 @@ import android.arch.paging.DataSource;
  *  @文件名:   PageDataFactory
  *  @创建者:   fanlelong
  *  @创建时间:  2018/11/20 下午4:24
- *  @描述：    TODO
  */
-public class PageDataFactory<Key, Value> extends DataSource.Factory<Key, Value> {
+public  class PageDataFactory<T, VM> extends DataSource.Factory<T, VM> {
 
-    private MutableLiveData<PageDataSource<Key, Value>> sourceLiveData = new MutableLiveData<>();
+    private MutableLiveData<PageDataSource<T, VM>> sourceLiveData = new MutableLiveData<>();
+
     @Override
-    public DataSource<Key, Value> create() {
-        PageDataSource<Key, Value> source = new PageDataSource<>();
+    public DataSource<T, VM> create() {
+        PageDataSource<T, VM> source = new PageDataSource<T, VM>() {
+            @Override
+            protected void setLoadAfterResult(LoadParams<T> params, LoadCallback<T, VM> callback) {
+
+            }
+
+            @Override
+            protected void setLoadInitial(LoadInitialParams<T> params, LoadInitialCallback<T, VM> callback) {
+
+            }
+        };
         sourceLiveData.postValue(source);
         return source;
     }
+
+//    public abstract PageDataSource<T, VM> createDataSource();
 }

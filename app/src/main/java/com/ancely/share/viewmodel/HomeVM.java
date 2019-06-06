@@ -2,8 +2,7 @@ package com.ancely.share.viewmodel;
 
 import android.arch.lifecycle.MediatorLiveData;
 
-import com.ancely.netan.request.mvvm.BaseViewModel;
-import com.ancely.share.base.HttpResult;
+import com.ancely.share.base.BaseResultVM;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
 import com.ancely.share.bean.HomeCollectBean;
@@ -18,7 +17,7 @@ import java.util.List;
  *  @创建时间:  2019/6/2 4:10 PM
  *  @描述：    TODO
  */
-public class HomeVM extends BaseViewModel<HttpResult<HomeBean>> {
+public class HomeVM extends BaseResultVM<HomeBean> {
 
     public MediatorLiveData<List<HomeBanner>> getHomeBanner() {
 
