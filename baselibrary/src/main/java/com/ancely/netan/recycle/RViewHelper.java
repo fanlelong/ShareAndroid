@@ -70,13 +70,10 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
         mRecycleView.setItemAnimator(new DefaultItemAnimator());
         if (mItemDecoration != null) mRecycleView.addItemDecoration(mItemDecoration);
         if (mSwipRefreshHelper != null) {
-            mSwipRefreshHelper.setSwipeRefreshListener(new SwipeRefreshHelper.SwipeRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    dismissSwipeRefresh(); //刷新完隐藏控件
-                    mCurrentPageNum = mStartPageNum;//重置页码
-                    if (listener != null) listener.onRefresh();
-                }
+            mSwipRefreshHelper.setSwipeRefreshListener(() -> {
+                dismissSwipeRefresh(); //刷新完隐藏控件
+                mCurrentPageNum = mStartPageNum;//重置页码
+                if (listener != null) listener.onRefresh();
             });
         }
         mRecycleView.setAdapter(mRecycleViewAdapter);
@@ -95,6 +92,9 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
 
     private boolean isLoadMoreFlag;//加载更多标志
 
+    /**
+     * 更新全部 包括headers and foots
+     */
     public void notifyAdapterDataSetChanged(List<T> datas) {
         if (datas == null) return;
         if (mSwipeRefresh != null) {
@@ -107,6 +107,49 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
             mRecycleViewAdapter.addDatas(datas);
         }
     }
+
+    public void notifyLocalDataSetChanged(List<T> datas) {
+        if (datas == null) return;
+        if (mSwipeRefresh != null) {
+            mSwipeRefresh.setRefreshing(false);
+        }
+        isLoadMoreFlag = false;
+        if (mCurrentPageNum == mStartPageNum) {
+            mRecycleViewAdapter.updataDatas(datas);
+        } else {
+            mRecycleViewAdapter.addDatas(datas);
+        }
+    }
+
+    /**
+     * 不包括headers and foots
+     */
+    public void notifyItemChangedReomeHeader(List<T> datas) {
+        if (datas == null) return;
+        if (mSwipeRefresh != null) {
+            mSwipeRefresh.setRefreshing(false);
+        }
+        isLoadMoreFlag = datas.size() >= mPageSize && mSupportPaging;
+        if (mCurrentPageNum == mStartPageNum) {
+            mRecycleViewAdapter.updataRangeDatas(datas);
+        } else {
+            mRecycleViewAdapter.addRangeDatas(datas);
+        }
+    }
+
+    public void notifyItemChangedReomeHeaderToLocal(List<T> datas) {
+        if (datas == null) return;
+        if (mSwipeRefresh != null) {
+            mSwipeRefresh.setRefreshing(false);
+        }
+        isLoadMoreFlag = false;
+        if (mCurrentPageNum == mStartPageNum) {
+            mRecycleViewAdapter.updataRangeDatas(datas);
+        } else {
+            mRecycleViewAdapter.addRangeDatas(datas);
+        }
+    }
+
 
     public static class Builder<T> {
         private final RViewCreate<T> create;

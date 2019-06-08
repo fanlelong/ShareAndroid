@@ -1,7 +1,7 @@
 package com.ancely.netan.request.okhttp;
 
 import android.support.annotation.NonNull;
-import com.ancely.netan.request.NetWorkManager;
+import com.ancely.netan.NetWorkManager;
 import com.bumptech.glide.load.Options;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.ModelLoader;

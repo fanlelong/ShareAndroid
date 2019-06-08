@@ -1,4 +1,4 @@
-package com.ancely.netan.request;
+package com.ancely.netan;
 
 import android.annotation.SuppressLint;
 import android.app.Application;
@@ -6,6 +6,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.ancely.netan.network.NetChangerManager;
 import com.ancely.netan.request.cookie.CookieManger;
 import com.ancely.netan.request.life.LifeManagerRetriever;
 import com.ancely.netan.request.okhttp.HttpLoggingInterceptor;
@@ -43,7 +44,6 @@ public class NetWorkManager {
     private LinkedHashMap<String, String> heardsMap;
     private Context context;
     private HttpsSSL.SSLParams sslParams;
-
     private final LifeManagerRetriever lifeManagerRetriever;
 
 
@@ -95,6 +95,7 @@ public class NetWorkManager {
         } else {
             this.context = context.getApplicationContext();
         }
+        NetChangerManager.getDefault().init(this.context);
         HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor("ancelyOkhttp:");
         httpLoggingInterceptor.setPrintLevel(HttpLoggingInterceptor.Level.BODY);
         httpLoggingInterceptor.setColorLevel(Level.INFO);

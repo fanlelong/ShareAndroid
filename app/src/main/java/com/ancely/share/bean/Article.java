@@ -3,6 +3,7 @@ package com.ancely.share.bean;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
  *  @创建时间:  2019/6/2 3:55 PM
  *  @描述：    文章列表
  */
-@Entity(tableName = "article")
+@Entity(tableName = "article", indices = {@Index("id")})
 public class Article {
     @ColumnInfo(name = "apk_link")
     private String apkLink;
@@ -35,7 +36,18 @@ public class Article {
     private String envelopePic;
     @ColumnInfo(name = "fresh")
     private boolean fresh;//是否新文章
-    @PrimaryKey
+
+    public long getArtileId() {
+        return artileId;
+    }
+
+    public void setArtileId(long artileId) {
+        this.artileId = artileId;
+    }
+
+    @PrimaryKey(autoGenerate = true)
+    private long artileId;
+    @ColumnInfo(name = "id")
     private int id;
     @ColumnInfo(name = "link")
     private String link;

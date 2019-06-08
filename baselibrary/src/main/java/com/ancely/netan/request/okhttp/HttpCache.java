@@ -1,6 +1,6 @@
 package com.ancely.netan.request.okhttp;
 
-import com.ancely.netan.request.NetWorkManager;
+import com.ancely.netan.NetWorkManager;
 
 import java.io.File;
 

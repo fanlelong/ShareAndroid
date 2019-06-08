@@ -99,7 +99,7 @@ public class MainActivity extends BaseModelActivity {
 
     @Override
     public boolean isNeedCheckNetWork() {
-        return false;
+        return true;
     }
 
     @Override

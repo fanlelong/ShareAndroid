@@ -29,6 +29,9 @@ import java.util.List;
  *  @描述：    TODO
  */
 public class HomeAdatper extends RViewAdapter<Article> {
+
+    private AutoLooperView mLooperView;
+
     public HomeAdatper(HomeBean datas) {
         super(datas.getDatas());
         addItemStyle(new RViewItem<Article>() {
@@ -52,9 +55,9 @@ public class HomeAdatper extends RViewAdapter<Article> {
                 holder.setText(R.id.item_frg_home_auther_tv, entry.getAuthor()).setText(R.id.item_frg_home_tiem_tv, entry.getNiceDate())
                         .setText(R.id.item_frg_home_desc_tv, entry.getTitle())
                         .setText(R.id.item_frg_home_chapter_tv, entry.getSuperChapterName() + "/ " + entry.getChapterName())
-                        .setVisible(R.id.item_frg_home_icon_tv, !TextUtils.isEmpty(entry.getEnvelopePic()));
+                        .setVisible(R.id.item_frg_home_icon_iv, !TextUtils.isEmpty(entry.getEnvelopePic()));
                 if (!TextUtils.isEmpty(entry.getEnvelopePic())) {
-                    ImageView image = holder.getView(R.id.item_frg_home_icon_tv);
+                    ImageView image = holder.getView(R.id.item_frg_home_icon_iv);
                     Glide.with(image).load(entry.getEnvelopePic()).into(image);
                 }
                 if (entry.isTop()) {//置顶
@@ -81,19 +84,19 @@ public class HomeAdatper extends RViewAdapter<Article> {
 
     @Override
     public void onBindHeaderHolder(RViewHolder holder, int position, int layoutId, Object o) {
-        AutoLooperView looperView = holder.getView(R.id.frag_home_banner);
+        mLooperView = holder.getView(R.id.frag_home_banner);
         List<HomeBanner> homeBanners = (List<HomeBanner>) o;
         if (homeBanners.size() == 0) {
             return;
         }
-        looperView.setOnBannerItemClick(new AutoLooperView.BannerItemClick() {
+        mLooperView.setOnBannerItemClick(new AutoLooperView.BannerItemClick() {
             @Override
             public void onBannerItemClick(int position) {
                 Toast.makeText(ShareApplication.getInstance(), "position " + position + "--" + homeBanners.get(position).getTitle(), Toast.LENGTH_SHORT).show();
             }
         });
 
-        looperView.setDatas(new AutoLooperAdapter<HomeBanner>(homeBanners) {
+        AutoLooperAdapter<HomeBanner> autoLooperAdapter = new AutoLooperAdapter<HomeBanner>(homeBanners) {
             @Override
             public View creadView(ViewGroup container, int position, HomeBanner entry) {
                 ImageView imageView = new ImageView(container.getContext());
@@ -102,7 +105,17 @@ public class HomeAdatper extends RViewAdapter<Article> {
                 container.addView(imageView);
                 return imageView;
             }
-        });
+        };
+        mLooperView.setDatas(autoLooperAdapter);
+        startTruning();
+    }
+
+    public void startTruning() {
+        if (mLooperView != null) mLooperView.startTurning();
+    }
+
+    public void stopTurning() {
+        if (mLooperView != null) mLooperView.stopTurning();
     }
 
     private ColleclClickListener mListener;

@@ -13,7 +13,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-import com.ancely.netan.request.NetWorkManager;
+import com.ancely.netan.network.Net;
+import com.ancely.netan.network.NetType;
+import com.ancely.netan.NetWorkManager;
 import com.ancely.netan.request.exception.ApiException;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
@@ -39,7 +41,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     private int flag;//用来判断不同请求的标识
     private static final String TAG = "AncelyModelP";
     private boolean isShowLoading;
-    private int retryCount = 3;//请求重试次数
+    private int retryCount = 1;//请求重试次数
     private int retryTime = 1000;//每隔多少请求重试一次,毫秒
 
     /**
@@ -101,7 +103,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     }
 
 
-    public void startRequestService(Map<String, Object> params, int flag, boolean isShowLoading) {
+    public void startRequestService(Map<String, Object> params, int flag, boolean isShowLoading, boolean isAddRetry) {
 
         if (params == null) {
             params = new HashMap<>();
@@ -113,12 +115,14 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         }
 
         if (isShowLoading) {
-            mBaseViewModel.getShowLoadingLiveData().setValue(flag);
+            mBaseViewModel.getShowLoadingLiveData().postValue(flag);
         }
-        this.params = params;
-        this.flag = flag;
-        this.isShowLoading = isShowLoading;
-        sendRequestToServer(mRequest, netObservable, flag, params, isShowLoading);
+        if (isAddRetry) {
+            this.params = params;
+            this.flag = flag;
+            this.isShowLoading = isShowLoading;
+        }
+        sendRequestToServer(mRequest, netObservable, flag, params, isShowLoading, isAddRetry);
     }
 
     /**
@@ -128,6 +132,18 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         startRequestService(params, flag, isShowLoading);
     }
 
+    @Net
+    public void rerequest(NetType netType) {
+        if (!netRequestFailed) return;
+        switch (netType) {
+            case WIFI:
+            case CMWAP:
+            case CMNET:
+                rerequest();
+                break;
+        }
+    }
+
     /**
      * 请求之前可以做一些操作
      */
@@ -135,12 +151,17 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
 
     }
 
-    private void sendRequestToServer(R request, Observable<T> netObservable, int flag, Map<String, Object> params, boolean isShowLoading) {
+    private void sendRequestToServer(R request, Observable<T> netObservable, int flag, Map<String, Object> params, boolean showLoading, boolean isRetry) {
         Observable<T> cacheObservable = Observable.create(emitter -> handlerFirstObservable(emitter, request, params, flag));
 
         Observable<T> concat = Observable.concat(cacheObservable, netObservable);
+
+        ResponseBean<T> responseBean = new ResponseBean<>();
+        responseBean.flag = flag;
+        responseBean.isShowLoading = showLoading;
+        responseBean.isRetry = isRetry;
         if (!NetUtils.isConnected(NetWorkManager.getInstance().getContext())) {
-            accessError(404, "网络异常,请尝试切换其它网络..", flag, isShowLoading);
+            accessError(404, "网络异常,请尝试切换其它网络..", responseBean);
             return;
         }
         disposable(concat.retryWhen(new RetryWithDelay(retryCount, retryTime))
@@ -148,13 +169,10 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
                 .compose(SchedulerProvider.getInstance().applySchedulers())
                 .subscribe(t -> {
                     if (t == null) {
-                        accessError(-1, "request data error ", flag, isShowLoading);
+                        accessError(-1, "request data error ", responseBean);
                         return;
                     }
-                    ResponseBean<T> responseBean = new ResponseBean<>();
                     responseBean.body = t;
-                    responseBean.flag = flag;
-                    responseBean.isShowLoading = isShowLoading;
                     //判断是不是先要内部操作数据,默认不进行数据重组,如果自己重组了数据,则应该对dialog进行显示和隐藏,以级是否是加载更多数据
                     boolean handlerDataFlag = hanlerDataRequestSuccess(responseBean);
                     if (handlerDataFlag) {
@@ -169,15 +187,25 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
                 }, throwable -> {
                     if (throwable instanceof ApiException) {
                         ApiException exception = (ApiException) throwable;
-                        accessError(exception.getCode(), (exception).getDisplayMessage(), flag, isShowLoading);
+                        accessError(exception.getCode(), (exception).getDisplayMessage(), responseBean);
                     }
                 }));
     }
 
+    public void startRequestService(Map<String, Object> map, int flag, boolean isAddRetry) {
+
+        this.startRequestService(map, flag, true, isAddRetry);
+
+    }
+
     public void startRequestService(Map<String, Object> map, int flag) {
 
-        this.startRequestService(map, flag, true);
+        this.startRequestService(map, flag, true, true);
 
+    }
+
+    public void startRequestService(Map<String, Object> map, boolean isAddRetry) {
+        this.startRequestService(map, 1, isAddRetry);
     }
 
     public void startRequestService(Map<String, Object> map) {
@@ -185,7 +213,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     }
 
     public void startRequestService() {
-        this.startRequestService(null, 1);
+        this.startRequestService(null, 1, true);
     }
 
     protected abstract Observable<T> getObservable(R request, Map<String, Object> map, int flag);
@@ -197,7 +225,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         if (isShowLoading) {
             mBaseViewModel.getHideLoadingLiveData().setValue(flag);
         }
-
+        netRequestFailed = false;
         mBaseViewModel.getResultLiveData().setValue(responseBean);
     }
 
@@ -206,16 +234,19 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         if (isShowLoading) {
             mBaseViewModel.getHideLoadingLiveData().setValue(flag);
         }
-
+        netRequestFailed = false;
         mBaseViewModel.getMoreLiveData().setValue(responseBean);
     }
 
+    private boolean netRequestFailed;//网络请求失败标志
+
     @Override
-    public void accessError(int code, String errorMsg, int flag, boolean isShowLoading) {
+    public void accessError(int code, String errorMsg, ResponseBean<T> responseBean) {
 
         if (isShowLoading) {
             mBaseViewModel.getHideLoadingLiveData().setValue(flag);
         }
+        if (responseBean.isRetry) netRequestFailed = true;
         mBaseViewModel.getErrorLiveData().setValue(new RequestErrBean(code, errorMsg, flag));
     }
 
@@ -246,5 +277,14 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     @Override
     public ObservableTransformer<T, T> getTransformer() {
         return ResultTransformer.handleResult();
+    }
+
+    /**
+     * 是否开启网络改变监听
+     *
+     * @return 默认为true 开启
+     */
+    public boolean isOpenNetChanger() {
+        return true;
     }
 }

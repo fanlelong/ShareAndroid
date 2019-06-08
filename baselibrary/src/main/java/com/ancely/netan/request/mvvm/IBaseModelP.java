@@ -18,7 +18,7 @@ public interface IBaseModelP<T> {
 
     void accessMoreSuccess(ResponseBean<T> responseBean, int flag, boolean isShowLoading);
 
-    void accessError(int code, String errorMsg, int flag, boolean isShowLoading);
+    void accessError(int code, String errorMsg,ResponseBean<T> responseBean);
 
     void unDisposable();
 

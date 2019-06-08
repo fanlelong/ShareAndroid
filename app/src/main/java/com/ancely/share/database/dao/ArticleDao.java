@@ -28,7 +28,7 @@ public interface ArticleDao {
     @Query("SELECT * FROM article")
     Flowable<List<Article>> getAll();
 
-    @Query("SELECT * FROM article WHERE is_top = 0")
+    @Query("SELECT * FROM article")
     Single<List<Article>> getArticleAll();
 
     @Query("SELECT * FROM article WHERE is_top = 1")

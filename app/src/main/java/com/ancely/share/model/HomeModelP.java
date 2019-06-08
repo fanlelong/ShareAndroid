@@ -52,9 +52,12 @@ public class HomeModelP extends BaseModelP<HomeBean> {
             for (Article article : topArticle.getData()) {
                 article.setTop(true);
             }
+            AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().deleteAllArticle();
+            AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().insertAll(topArticle.getData());
+            AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().insertAll(homeBeanHttpResult.getData().getDatas());
+
             topArticle.getData().addAll(homeBeanHttpResult.getData().getDatas());
             homeBeanHttpResult.getData().setDatas(topArticle.getData());
-            AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().insertAll(topArticle.getData());
             return homeBeanHttpResult;
         });
     }
@@ -93,6 +96,7 @@ public class HomeModelP extends BaseModelP<HomeBean> {
             if (t != null) {
                 HomeVM homeVM = ViewModelProviders.of(mFragment).get(HomeVM.class);
                 homeVM.getHomeBanner().postValue(t.getData());
+                AppDatabase.getInstance(ShareApplication.getInstance()).getBannerDao().deleteAllArticle();
                 AppDatabase.getInstance(ShareApplication.getInstance()).getBannerDao().insertAll(t.getData());
             }
             emitter.onComplete();

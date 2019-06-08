@@ -2,7 +2,7 @@ package com.ancely.share;
 
 import android.app.Application;
 
-import com.ancely.netan.request.NetWorkManager;
+import com.ancely.netan.NetWorkManager;
 import com.ancely.share.others.HeaderInterceptor;
 import com.ancely.share.others.SaveCookieInterceptor;
 

@@ -9,13 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AutoLooperAdapter<T> extends PagerAdapter {
-    private List<T> datas;
+    private List<T> datas = new ArrayList<>();
 
     protected AutoLooperAdapter(List<T> datas) {
         if (datas == null) {
             datas = new ArrayList<>();
         }
-        this.datas = datas;
+        this.datas.clear();
+        this.datas.addAll(datas);
     }
 
     @Override
@@ -41,10 +42,10 @@ public abstract class AutoLooperAdapter<T> extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         position = getRealPositon(position);
-        return creadView(container, position,datas.get(position));
+        return creadView(container, position, datas.get(position));
     }
 
-    public abstract View creadView(ViewGroup container, int position,T entry);
+    public abstract View creadView(ViewGroup container, int position, T entry);
 
     /**
      * 获取真实的positon

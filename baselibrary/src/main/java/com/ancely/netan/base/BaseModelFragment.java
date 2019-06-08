@@ -11,14 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.ancely.netan.event.NetworkChangeEvent;
+import com.ancely.netan.network.Net;
+import com.ancely.netan.network.NetType;
+import com.ancely.netan.receiver.NetWorkConnectReceiver;
 import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -39,9 +37,8 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
     private View mContentView;
     protected Context mContext;
     protected VM mViewModel;
-    public boolean currentNetStatus = false;//当前的网络连接状态
-    public boolean isResevierrequest;//是否请求出现错误标记
     protected Map<String, Object> mParams = new HashMap<>();
+    protected boolean mIsFirstInto;
 
     @Override
     public void onAttach(Context context) {
@@ -52,8 +49,8 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EventBus.getDefault().register(this);
     }
+
 
     @Nullable
     @Override
@@ -77,7 +74,10 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
 
     private void initObserveDatas() {
         mViewModel.getErrorLiveData().observe(this, this::accessError);
-        mViewModel.getResultLiveData().observe(this, this::accessSuccess);
+        mViewModel.getResultLiveData().observe(this, responseBean -> {
+            mIsFirstInto = true;
+            accessSuccess(responseBean);
+        });
         mViewModel.getMoreLiveData().observe(this, this::accessMoreSuccess);
         mViewModel.getShowLoadingLiveData().observe(this, this::showloading);
         mViewModel.getShowLoadingLiveData().observe(this, this::hideLoading);
@@ -115,22 +115,9 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
 
     protected abstract int getContentView();
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNetworkChangeEvent(NetworkChangeEvent event) {
-        if (isNeedCheckNetWork()) return;
-        if ((currentNetStatus && event.isConnected) || (!currentNetStatus && !event.isConnected)) {
-            return;
-        }
-        if (isResevierrequest && event.isConnected) {
-            resevierRequest();
-        }
-        currentNetStatus = event.isConnected;
-    }
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
 
@@ -150,7 +137,6 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
 
     @Override
     public void accessError(RequestErrBean errBean) {
-        isResevierrequest = true;
         Toast.makeText(mContext, errBean.msg, Toast.LENGTH_SHORT).show();
     }
 
@@ -159,7 +145,6 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
      */
     @Override
     public void accessSuccess(ResponseBean<T> responseBean) {
-        isResevierrequest = false;
     }
 
     /**
@@ -167,14 +152,5 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
      */
     @Override
     public void accessMoreSuccess(ResponseBean<T> responseBean) {
-        isResevierrequest = false;
-    }
-
-    /**
-     * 重新加载数据
-     */
-    @Override
-    public void resevierRequest() {
-
     }
 }

@@ -115,9 +115,7 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
             onBindHeaderHolder(holder, position, layoutId, sparseArrayCompat.get(layoutId));
         }
     }
-
     public void onBindHeaderHolder(RViewHolder holder, int position, int layoutId, Object o) {
-
     }
 
     //根据position获取当前的样式
@@ -150,6 +148,12 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         notifyDataSetChanged();
     }
 
+
+    public void addRangeDatas(List<T> datas) {
+        this.datas.addAll(datas);
+        notifyItemRangeChanged(this.datas.size() + mHeaderDatas.size(), datas.size());
+    }
+
     //更新数据
     public void updataDatas(List<T> datas) {
         if (datas == null) return;
@@ -157,6 +161,16 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         this.datas.addAll(datas);
         notifyDataSetChanged();
     }
+
+
+    //更新数据
+    public void updataRangeDatas(List<T> datas) {
+        if (datas == null) return;
+        this.datas.clear();
+        this.datas.addAll(datas);
+        notifyItemRangeChanged(mHeaderDatas.size(), this.datas.size()+1);
+    }
+
 
     public void setItemListener(ItemListener<T> itemListener) {
         this.itemListener = itemListener;
@@ -181,7 +195,7 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
      * @return
      */
     public boolean isFooterViewPos(int position) {//举例， 2个头，2个inner，pos 0 1 2 3 ,false,4+true
-        return position >= getFooterViewCount() + datas.size();
+        return position >= getFooterViewCount() + datas.size()+getHeaderViewCount();
     }
 
     public int getFooterViewCount() {
@@ -260,4 +274,6 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
             }
         }
     }
+
+
 }

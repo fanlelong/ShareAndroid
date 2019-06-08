@@ -46,7 +46,7 @@ public abstract class BaseModelP<T> extends ModelP<HttpResult<T>, ShareApi> {
     public boolean hanlerDataRequestSuccess(ResponseBean<HttpResult<T>> responseBean) {
         HttpResult<T> body = responseBean.body;
         if (body.getErrorCode() != 0) {
-            accessError(body.getErrorCode(), body.getErrorMsg(), responseBean.flag, responseBean.isShowLoading);
+            accessError(body.getErrorCode(), body.getErrorMsg(), responseBean);
             return true;
         }
         return super.hanlerDataRequestSuccess(responseBean);

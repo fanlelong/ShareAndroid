@@ -4,9 +4,13 @@ import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.ancely.netan.network.Net;
+import com.ancely.netan.network.NetChangerManager;
+import com.ancely.netan.network.NetType;
 import com.ancely.netan.recycle.base.RViewAdapter;
 import com.ancely.netan.recycle.listener.ItemListener;
 import com.ancely.netan.request.mvvm.ModelP;
@@ -60,6 +64,7 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
 
     @Override
     protected void initView() {
+        NetChangerManager.getDefault().registerObserver(this);
         mFragHomeRv = findViewById(R.id.frag_home_rv);
         mFragHomeRefresh = findViewById(R.id.frag_home_refresh);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -110,7 +115,7 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
                 params.put("id", colleckId);
                 params.put("position", position);
                 params.put("isCollect", article.isCollect());
-                mModelP.startRequestService(params, 4);
+                mModelP.startRequestService(params, 4, false);
             }
         });
     }
@@ -153,14 +158,12 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
 
     @Override
     public void accessSuccess(ResponseBean<HttpResult<HomeBean>> responseBean) {
-        super.accessSuccess(responseBean);
-        notifyAdapterDataSetChanged(responseBean.body.getData().getDatas());
+        notifyItemChangedReomeHeader(responseBean.body.getData().getDatas());
     }
 
     @Override
     public void accessMoreSuccess(ResponseBean<HttpResult<HomeBean>> responseBean) {
-        super.accessMoreSuccess(responseBean);
-        notifyAdapterDataSetChanged(responseBean.body.getData().getDatas());
+        notifyItemChangedReomeHeader(responseBean.body.getData().getDatas());
     }
 
     @Override
@@ -192,16 +195,14 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     @Override
     public void accessError(RequestErrBean errBean) {
         super.accessError(errBean);
-        if (errBean.flag != ModelP.IS_LOADING_MORE_DATA) {
-            Single<List<Article>> articleTopAll = AppDatabase.getInstance(getContext()).articleDao().getArticleTopAll();
+        if (errBean.flag != ModelP.IS_LOADING_MORE_DATA && !mIsFirstInto) {
             Single<List<Article>> articleAll = AppDatabase.getInstance(getContext()).articleDao().getArticleAll();
             Single<List<HomeBanner>> banners = AppDatabase.getInstance(getContext()).getBannerDao().getBanners();
 
             List<Article> article = new ArrayList<>();
-            mModelP.disposable(Single.concat(articleTopAll, articleAll).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(articles -> {
-                Collections.reverse(articles);
+            mModelP.disposable(articleAll.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(articles -> {
                 article.addAll(articles);
-                notifyAdapterDataSetChanged(article);
+                notifyItemChangedReomeHeaderToLocal(article);
             }));
 
             mModelP.disposable(banners.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(homeBanners -> {
@@ -213,5 +214,43 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
                 }
             }));
         }
+    }
+
+
+    @Net
+    public void netWork(NetType netType) {
+        switch (netType) {
+            case WIFI:
+                Log.e(getClass().getSimpleName(), "WIFI ");
+                break;
+            case CMNET:
+                Log.e(getClass().getSimpleName(), "CMNET ");
+                break;
+            case CMWAP:
+                Log.e(getClass().getSimpleName(), "CMWAP ");
+                break;
+            case NONE:
+                Log.e(getClass().getSimpleName(), "NONE ");
+                break;
+            default:
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mAdatper.startTruning();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mAdatper.stopTurning();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        NetChangerManager.getDefault().registerObserver(this);
     }
 }

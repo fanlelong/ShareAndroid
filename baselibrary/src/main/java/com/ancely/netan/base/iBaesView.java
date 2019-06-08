@@ -15,7 +15,4 @@ public interface iBaesView<T> {
     void accessMoreSuccess(ResponseBean<T> responseBean);
 
     boolean isNeedCheckNetWork();//是否需要检查网络状态
-
-    void resevierRequest();//重新请求数据
-
 }

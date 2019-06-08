@@ -87,6 +87,19 @@ public abstract class RViewFragment<VM extends BaseViewModel<HttpResult<T>>, T, 
         mHelper.notifyAdapterDataSetChanged(datas);
     }
 
+    public void notifyLocalDataSetChanged(List<R> datas) {
+
+        mHelper.notifyLocalDataSetChanged(datas);
+    }
+
+    protected void notifyItemChangedReomeHeader(List<R> article) {
+        mHelper.notifyItemChangedReomeHeader(article);
+    }
+
+    protected void notifyItemChangedReomeHeaderToLocal(List<R> article) {
+        mHelper.notifyItemChangedReomeHeaderToLocal(article);
+    }
+
     @Override
     public void accessError(RequestErrBean errBean) {
         super.accessError(errBean);

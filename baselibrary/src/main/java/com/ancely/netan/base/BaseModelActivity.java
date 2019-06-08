@@ -2,26 +2,28 @@ package com.ancely.netan.base;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 
-import com.ancely.netan.event.NetworkChangeEvent;
+import com.ancely.netan.R;
+import com.ancely.netan.network.Net;
+import com.ancely.netan.network.NetChangerManager;
+import com.ancely.netan.network.NetType;
 import com.ancely.netan.receiver.NetWorkConnectReceiver;
 import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
+import com.ancely.netan.utils.NetUtils;
 
 /*
  *  @项目名：  SharingTechnology
@@ -33,10 +35,14 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends AppCompatActivity implements View.OnClickListener, iBaesView<T> {
     public Context mContext;
-    private boolean mIsFirstInto;//是否第一次进入界面
+    protected boolean mIsFirstInto;//是否第一次进入界面
     private NetWorkConnectReceiver mNetWorkConnectReceiver;
     private boolean mCurrentNetStatus = true;//当前的网络连接状态
     public boolean isResevierrequest;//是否请求出现错误标记
+    private View mTipView;
+    private WindowManager.LayoutParams mLayoutParams;
+    private WindowManager.LayoutParams mToastLayoutParams;
+    private WindowManager mWindowManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,8 +63,9 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
 
         super.onCreate(savedInstanceState);
         mContext = this;
-        EventBus.getDefault().register(this);
-        registerReceiver();
+//        registerReceiver();
+        NetChangerManager.getDefault().registerObserver(this);
+        initTipView();
         int layoutId = getContentView();
         if (layoutId >= 0) {
             setContentView(layoutId);
@@ -71,6 +78,7 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
             mViewModel = ViewModelProviders.of(this).get(clazz);
             initObserver();
         }
+        onNetworkChangeEvent(NetUtils.getNetType());
     }
 
     protected VM mViewModel;
@@ -79,9 +87,19 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
      * 初始化请求数据
      */
     private void initObserver() {
-        mViewModel.getResultLiveData().observe(this, this::accessSuccess);
-        mViewModel.getMoreLiveData().observe(this, this::accessMoreSuccess);
-        mViewModel.getErrorLiveData().observe(this, this::accessError);
+        mViewModel.getErrorLiveData().observe(this, errBean -> {
+            isResevierrequest = true;
+            accessError(errBean);
+        });
+        mViewModel.getResultLiveData().observe(this, responseBean -> {
+            isResevierrequest = false;
+            mIsFirstInto = true;
+            accessSuccess(responseBean);
+        });
+        mViewModel.getMoreLiveData().observe(this, responseBean -> {
+            isResevierrequest = false;
+            accessMoreSuccess(responseBean);
+        });
         mViewModel.getShowLoadingLiveData().observe(this, this::showloading);
         mViewModel.getShowLoadingLiveData().observe(this, this::hideLoading);
     }
@@ -96,49 +114,58 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
 
     protected abstract void initView();
 
-    private void registerReceiver() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-        filter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-        filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        mNetWorkConnectReceiver = new NetWorkConnectReceiver();
-        registerReceiver(mNetWorkConnectReceiver, filter);
+    private void initTipView() {
+        LayoutInflater inflater = getLayoutInflater();
+        mTipView = inflater.inflate(R.layout.error_work, null);
+//        TextView viewById = mTipView.findViewById(R.id.error);
+//        viewById.setText(getClass().getSimpleName());
+        //提示View布局
+        mWindowManager = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        mLayoutParams = new WindowManager.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT);
+        mToastLayoutParams = new WindowManager.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.TYPE_APPLICATION, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, PixelFormat.TRANSLUCENT);
+        //使用非CENTER时，可以通过设置XY的值来改变View的位置
+        mLayoutParams.gravity = Gravity.TOP;
+        mLayoutParams.x = 0;
+        mLayoutParams.y = 0;
+
+        mToastLayoutParams.gravity = Gravity.CENTER | Gravity.BOTTOM;
+        mToastLayoutParams.y = px2dpH(200);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onNetworkChangeEvent(NetworkChangeEvent event) {
-        if (isNeedCheckNetWork()) return;
-
-        if (!mIsFirstInto) {
-            hasNetWork(event.isConnected);
-            mIsFirstInto = true;
+    @Net(isManThread = true)
+    public void onNetworkChangeEvent(NetType netType) {
+        if (!isNeedCheckNetWork()) return;
+        boolean isConnected = false;
+        switch (netType) {
+            case WIFI:
+            case CMWAP:
+            case CMNET:
+                isConnected = true;
+                break;
+            default:
+                break;
         }
-
-        if ((mCurrentNetStatus && event.isConnected) || (!mCurrentNetStatus && !event.isConnected)) {
-            return;
-        }
-        mCurrentNetStatus = event.isConnected;
-        if (isResevierrequest && event.isConnected) {
-            resevierRequest();
-        }
-        hasNetWork(event.isConnected);
+        hasNetWork(isConnected);
     }
 
     /**
      * 每次网络变化都会走到这个就去
      *
-     * @param isConnected true: 有网;
+     * @param connected true: 有网;
      */
-    public void hasNetWork(boolean isConnected) {
-
+    public void hasNetWork(boolean connected) {
+        if (isNeedCheckNetWork()) {
+            if (connected) {
+                if (mTipView != null && mTipView.getParent() != null) {
+                    mWindowManager.removeView(mTipView);
+                }
+            } else {
+                if (mTipView.getParent() == null) {
+                    mWindowManager.addView(mTipView, mLayoutParams);
+                }
+            }
+        }
     }
-
-    /**
-     * 重新请求数据
-     */
-    public void resevierRequest() {
-    }
-
 
     //是否显示全屏
     protected boolean isFullScreen() {
@@ -148,7 +175,7 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
+        NetChangerManager.getDefault().registerObserver(this);
         if (mNetWorkConnectReceiver != null) {
             unregisterReceiver(mNetWorkConnectReceiver);
         }
@@ -171,16 +198,28 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
 
     @Override
     public void accessError(RequestErrBean errBean) {
-        isResevierrequest = true;
     }
 
     @Override
     public void accessSuccess(ResponseBean<T> responseBean) {
-        isResevierrequest = false;
     }
 
     @Override
     public void accessMoreSuccess(ResponseBean<T> responseBean) {
-        isResevierrequest = false;
     }
+
+
+    public int px2dpH(int px) {
+        float scale = getResources().getDisplayMetrics().heightPixels / 720.0f;
+        return (int) (px * scale + 0.5f);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        if (mTipView != null && mTipView.getParent() != null) {
+            mWindowManager.removeView(mTipView);
+        }
+    }
+
 }

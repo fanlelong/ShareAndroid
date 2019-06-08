@@ -11,6 +11,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import com.ancely.netan.network.NetChangerManager;
+import com.ancely.netan.network.NetType;
+
 public class NetUtils {
     /**
      * 判断网络是否连接 * @param context * @return
@@ -36,5 +39,25 @@ public class NetUtils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static NetType getNetType() {
+        ConnectivityManager cm = (ConnectivityManager) NetChangerManager.getDefault().getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return NetType.NONE;
+        NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+        if (networkInfo == null) {
+            return NetType.NONE;
+        }
+        int type = networkInfo.getType();
+        if (type == ConnectivityManager.TYPE_MOBILE) {
+            if (networkInfo.getExtraInfo().toLowerCase().equals("cmnet")) {
+                return NetType.CMNET;
+            } else {
+                return NetType.CMWAP;
+            }
+        } else if (type == ConnectivityManager.TYPE_WIFI) {
+            return NetType.WIFI;
+        }
+        return NetType.NONE;
     }
 }

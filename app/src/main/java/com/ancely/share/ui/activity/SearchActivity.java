@@ -86,7 +86,7 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
 
     @Override
     public boolean isNeedCheckNetWork() {
-        return false;
+        return true;
     }
 
     @Override
