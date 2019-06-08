@@ -92,12 +92,9 @@ public class FlowLayout extends ViewGroup {
                     mLineDatas.add(mCurrent);
                 }
             }
-            childView.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.onClidlClick(v);
-                    }
+            childView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onClidlClick(v, datas);
                 }
             });
 
@@ -130,6 +127,15 @@ public class FlowLayout extends ViewGroup {
         }
     }
 
+    private Object datas;
+
+    public void setDatas(Object datas) {
+        this.datas = datas;
+    }
+
+    public Object getDatas() {
+        return datas;
+    }
 
     private class Line {
 
@@ -224,7 +230,7 @@ public class FlowLayout extends ViewGroup {
     }
 
     public interface OnChildClickListener {
-        void onClidlClick(View view);
+        void onClidlClick(View view, Object datas);
     }
 
 //    int color[] = new int[]{0xffffc438, 0xff80cbc4, 0xff87c9e0, 0xffd1abe5, 0xffffc438, 0xff80cbc4, 0xff87c9e0, 0xffd1abe5};

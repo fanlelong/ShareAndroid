@@ -3,7 +3,6 @@ package com.ancely.share.model;
 import android.support.v4.app.FragmentActivity;
 
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
-import com.ancely.netan.request.utils.AppExecutors;
 import com.ancely.share.ShareApi;
 import com.ancely.share.ShareApplication;
 import com.ancely.share.base.BaseModelP;
@@ -38,7 +37,8 @@ public class HotTipsModelP extends BaseModelP<List<HotTipsBean>> {
 
     @Override
     public boolean hanlerDataRequestSuccess(ResponseBean<HttpResult<List<HotTipsBean>>> responseBean) {
-        AppExecutors.get().singleIO().execute(() -> AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().insertAll(responseBean.body.getData()));
+        AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().deleteHotTips();
+        AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().insertAll(responseBean.body.getData());
         return super.hanlerDataRequestSuccess(responseBean);
     }
 }

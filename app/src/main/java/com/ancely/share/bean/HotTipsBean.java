@@ -22,7 +22,9 @@ public class HotTipsBean {
      * visible : 1
      */
 
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    public long hotTip;
+    @ColumnInfo(name = "id")
     private int id;
     @ColumnInfo(name = "link")
     private String link;
@@ -32,6 +34,17 @@ public class HotTipsBean {
     private int order;
     @ColumnInfo(name = "visible")
     private int visible;
+
+    @ColumnInfo(name = "link_type")
+    private int linkType;
+
+    public int getLinkType() {
+        return linkType;
+    }
+
+    public void setLinkType(int linkType) {
+        this.linkType = linkType;
+    }
 
     public int getId() {
         return id;

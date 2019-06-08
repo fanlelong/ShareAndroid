@@ -2,6 +2,7 @@ package com.ancely.share;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -28,6 +29,12 @@ public class MainActivity extends BaseModelActivity {
     private LinearLayout mActMainContainer;
 
     private String[] mainString;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ShareApplication.destoryFlag = 1;
+    }
 
     @Override
     protected int getContentView() {

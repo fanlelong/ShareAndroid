@@ -13,9 +13,9 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import com.ancely.netan.NetWorkManager;
 import com.ancely.netan.network.Net;
 import com.ancely.netan.network.NetType;
-import com.ancely.netan.NetWorkManager;
 import com.ancely.netan.request.exception.ApiException;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
@@ -114,9 +114,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
             throw new NullPointerException("the method of getObservable  can not return null");
         }
 
-        if (isShowLoading) {
-            mBaseViewModel.getShowLoadingLiveData().postValue(flag);
-        }
+
         if (isAddRetry) {
             this.params = params;
             this.flag = flag;
@@ -163,6 +161,9 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
         if (!NetUtils.isConnected(NetWorkManager.getInstance().getContext())) {
             accessError(404, "网络异常,请尝试切换其它网络..", responseBean);
             return;
+        }
+        if (showLoading) {
+            mBaseViewModel.getShowLoadingLiveData().postValue(flag);
         }
         disposable(concat.retryWhen(new RetryWithDelay(retryCount, retryTime))
                 .compose(getTransformer())

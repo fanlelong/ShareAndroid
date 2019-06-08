@@ -89,7 +89,7 @@ public class NetWorkManager {
         return context;
     }
 
-    public NetWorkManager init(String host, List<Interceptor> interceptors, Context context) {
+    public NetWorkManager init(@NonNull String host, List<Interceptor> interceptors, @NonNull Context context) {
         if (context instanceof Application) {
             this.context = context;
         } else {

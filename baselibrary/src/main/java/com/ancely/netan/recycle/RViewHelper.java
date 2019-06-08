@@ -5,6 +5,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.ancely.netan.recycle.base.RViewAdapter;
 import com.ancely.netan.recycle.listener.RViewCreate;
@@ -92,6 +93,10 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
 
     private boolean isLoadMoreFlag;//加载更多标志
 
+    public boolean isLoadMoreFlag() {
+        return isLoadMoreFlag;
+    }
+
     /**
      * 更新全部 包括headers and foots
      */
@@ -171,38 +176,21 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
     public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
         super.onScrollStateChanged(recyclerView, newState);
         if (scrollListener != null) scrollListener.onScrollStateChanged(recyclerView, newState);
+        if (!mSupportPaging || !isLoadMoreFlag || scrollListener == null) {
+            return;
+        }
+        boolean isBottom;
+        isBottom = !recyclerView.canScrollVertically(1);
+        if (isLoadMoreFlag && isBottom) {
+            isLoadMoreFlag = false;
+            mCurrentPageNum++;
+            scrollListener.onLoadMoreDatas();
+        }
     }
 
     @Override
     public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
         if (scrollListener != null) scrollListener.onScrolled(recyclerView, dx, dy);
-
-        if (!mSupportPaging || !isLoadMoreFlag || scrollListener == null || !(mLayoutManager instanceof LinearLayoutManager)) {
-            return;
-        }
-        LinearLayoutManager manager = ((LinearLayoutManager) mLayoutManager);
-
-        boolean scrollFlag = false;
-        if (manager.getOrientation() == LinearLayoutManager.HORIZONTAL && dx <= 0) {
-            scrollFlag = true;
-        }
-        if (manager.getOrientation() == LinearLayoutManager.VERTICAL && dy <= 0) {
-            scrollFlag = true;
-        }
-        if (scrollFlag) return;
-        int pastVisiblesItems = ((LinearLayoutManager) mLayoutManager).findFirstVisibleItemPosition();
-        int visibleItemCount = mLayoutManager.getChildCount();
-        int totalItemCount = mLayoutManager.getItemCount();
-
-        synchronized (this) {
-            if (isLoadMoreFlag && (visibleItemCount + pastVisiblesItems) >= totalItemCount) {
-                //滑动到最后一个可见条目
-                isLoadMoreFlag = false;
-                mCurrentPageNum++;
-                mRecycleView.stopScroll();
-                scrollListener.onLoadMoreDatas();
-            }
-        }
     }
 }

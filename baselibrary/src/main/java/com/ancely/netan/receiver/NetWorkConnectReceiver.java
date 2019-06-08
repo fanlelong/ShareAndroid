@@ -3,14 +3,10 @@ package com.ancely.netan.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
-import com.ancely.netan.event.NetworkChangeEvent;
 import com.ancely.netan.network.NetChangeImpl;
 import com.ancely.netan.network.NetType;
 import com.ancely.netan.utils.NetUtils;
-
-import org.greenrobot.eventbus.EventBus;
 
 /*
  *  @项目名：  ShareAndroid

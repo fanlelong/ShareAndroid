@@ -19,6 +19,12 @@ public abstract class AutoLooperAdapter<T> extends PagerAdapter {
         this.datas.addAll(datas);
     }
 
+    public void setDatas(List<T> datas) {
+        this.datas.clear();
+        this.datas.addAll(datas);
+        notifyDataSetChanged();
+    }
+
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
         return view == object;

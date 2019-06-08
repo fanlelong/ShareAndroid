@@ -7,12 +7,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.ancely.netan.base.BaseModelFragment;
 import com.ancely.netan.recycle.RViewHelper;
 import com.ancely.netan.recycle.SwipeRefreshHelper;
 import com.ancely.netan.recycle.listener.RViewCreate;
 import com.ancely.netan.recycle.listener.RViewScrollListener;
-import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 
 import java.util.List;
@@ -24,13 +22,19 @@ import java.util.List;
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/2 3:40 PM
  */
-public abstract class RViewFragment<VM extends BaseViewModel<HttpResult<T>>, T, R> extends BaseModelFragment<VM, HttpResult<T>> implements RViewCreate<R>, SwipeRefreshHelper.SwipeRefreshListener, RViewScrollListener {
+public abstract class RViewFragment<VM extends BaseResultVM<T>, T, R> extends BaseFragment<VM, T> implements RViewCreate<R>, SwipeRefreshHelper.SwipeRefreshListener, RViewScrollListener {
     private RViewHelper<R> mHelper;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mHelper = new RViewHelper.Builder<>(this, this, this).build();
+        progressView.setOnClickListener(v -> {
+            if (!isResevierrequest) {
+                setProgressStatues(LOADING_FLAG);
+                resevierRequest();
+            }
+        });
     }
 
     @Override
@@ -92,12 +96,12 @@ public abstract class RViewFragment<VM extends BaseViewModel<HttpResult<T>>, T, 
         mHelper.notifyLocalDataSetChanged(datas);
     }
 
-    protected void notifyItemChangedReomeHeader(List<R> article) {
-        mHelper.notifyItemChangedReomeHeader(article);
+    protected void notifyItemChangedReomeHeader(List<R> datas) {
+        mHelper.notifyItemChangedReomeHeader(datas);
     }
 
-    protected void notifyItemChangedReomeHeaderToLocal(List<R> article) {
-        mHelper.notifyItemChangedReomeHeaderToLocal(article);
+    protected void notifyItemChangedReomeHeaderToLocal(List<R> datas) {
+        mHelper.notifyItemChangedReomeHeaderToLocal(datas);
     }
 
     @Override
@@ -106,5 +110,15 @@ public abstract class RViewFragment<VM extends BaseViewModel<HttpResult<T>>, T, 
         if (createSwipeRefresh() != null) {
             createSwipeRefresh().setRefreshing(false);
         }
+        setProgressStatues(NETWROK_ERROR);
+
+    }
+
+    @Override
+    public void showloading(int flag) {
+        setProgressStatues(LOADING_FLAG);
+    }
+
+    protected void resevierRequest() {
     }
 }

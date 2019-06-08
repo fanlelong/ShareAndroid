@@ -30,7 +30,6 @@ import com.ancely.share.utils.PreferenceUtils;
 import com.ancely.share.viewmodel.HomeVM;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +57,17 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
 
     @Override
     protected void loadData() {
+        Single<List<Article>> articleAll = AppDatabase.getInstance(getContext()).articleDao().getArticleAll();
+        Single<List<HomeBanner>> banners = AppDatabase.getInstance(getContext()).getBannerDao().getBanners();
 
+        mModelP.disposable(articleAll.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(this::notifyItemChangedReomeHeaderToLocal));
+        mModelP.disposable(banners.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(homeBanners -> {
+            if (homeBanners != null && homeBanners.size() > 0) {
+                bannerDatas.clear();
+                bannerDatas.addAll(homeBanners);
+                mAdatper.notifyItemChanged(0);
+            }
+        }));
         requestDatasFromServer(false);
     }
 
@@ -72,6 +81,7 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
         mAdatper = new HomeAdatper(datas);
         mModelP = new HomeModelP(this, HomeVM.class);
         mAdatper.addHeaderView(R.layout.item_banner, bannerDatas);
+        mAdatper.addFooterView(progressView);
         mViewModel.getHomeBanner().observe(this, homeBanners -> {
             if (homeBanners != null && homeBanners.size() > 0) {
                 bannerDatas.clear();
@@ -195,25 +205,6 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     @Override
     public void accessError(RequestErrBean errBean) {
         super.accessError(errBean);
-        if (errBean.flag != ModelP.IS_LOADING_MORE_DATA && !mIsFirstInto) {
-            Single<List<Article>> articleAll = AppDatabase.getInstance(getContext()).articleDao().getArticleAll();
-            Single<List<HomeBanner>> banners = AppDatabase.getInstance(getContext()).getBannerDao().getBanners();
-
-            List<Article> article = new ArrayList<>();
-            mModelP.disposable(articleAll.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(articles -> {
-                article.addAll(articles);
-                notifyItemChangedReomeHeaderToLocal(article);
-            }));
-
-            mModelP.disposable(banners.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(homeBanners -> {
-                Collections.reverse(homeBanners);
-                if (homeBanners != null && homeBanners.size() > 0 && bannerDatas.size() == 0) {
-                    bannerDatas.clear();
-                    bannerDatas.addAll(homeBanners);
-                    mAdatper.notifyItemChanged(0);
-                }
-            }));
-        }
     }
 
 
@@ -252,5 +243,10 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     public void onDestroy() {
         super.onDestroy();
         NetChangerManager.getDefault().registerObserver(this);
+    }
+
+    @Override
+    protected void resevierRequest() {
+        mModelP.rerequest();
     }
 }

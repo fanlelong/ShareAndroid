@@ -26,6 +26,8 @@ public class ShareApplication extends Application {
         return sInstance;
     }
 
+    public static int destoryFlag;
+
     @Override
     public void onCreate() {
         super.onCreate();

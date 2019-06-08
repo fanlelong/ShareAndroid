@@ -46,6 +46,7 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+
         if (isFullScreen()) {
             if (Build.VERSION.SDK_INT >= 21) {
                 View decorView = getWindow().getDecorView();

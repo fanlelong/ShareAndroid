@@ -1,6 +1,7 @@
 package com.ancely.share.database.dao;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
@@ -10,6 +11,7 @@ import com.ancely.share.bean.HotTipsBean;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 
 /*
@@ -24,8 +26,12 @@ import io.reactivex.Single;
 public interface HotTipsDao {
 
     //简单sql语句，查询article表所有的column
-    @Query("SELECT * FROM hot_tips WHERE visible = 1")
-    Single<List<HotTipsBean>> getAll();
+    @Query("SELECT * FROM hot_tips WHERE visible = 1 AND link_type = 0")
+    Single<List<HotTipsBean>> getHotAll();
+
+
+    @Query("SELECT * FROM hot_tips WHERE link_type = 1 ORDER BY hotTip DESC")
+    Flowable<List<HotTipsBean>> getHistoryAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(HotTipsBean article);
@@ -53,5 +59,11 @@ public interface HotTipsDao {
     int updateAll(List<HotTipsBean> user);
 
     @Query("DELETE FROM hot_tips")
-    void deleteAllArticle();
+    void deleteAllHotTips();
+
+    @Query("DELETE FROM hot_tips WhERE link_type = 0")
+    void deleteHotTips();
+
+    @Delete()
+    void deleteHistoryTip(HotTipsBean hotTipsBean);
 }

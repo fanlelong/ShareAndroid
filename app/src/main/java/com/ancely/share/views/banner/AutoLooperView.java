@@ -95,6 +95,13 @@ public class AutoLooperView extends RelativeLayout implements ViewPager.OnPageCh
         mViewPager.setCurrentItem(1);
     }
 
+
+    public void notifydataChange() {
+        if (mViewPager.getAdapter() != null) {
+            mViewPager.getAdapter().notifyDataSetChanged();
+        }
+    }
+
     /**
      * 通知数据变化
      * 如果只是增加数据建议使用 notifyDataSetAdd()
@@ -141,6 +148,10 @@ public class AutoLooperView extends RelativeLayout implements ViewPager.OnPageCh
                 }
             }
         }
+    }
+
+    public CustomViewpager getViewPager() {
+        return mViewPager;
     }
 
     /**
@@ -284,5 +295,17 @@ public class AutoLooperView extends RelativeLayout implements ViewPager.OnPageCh
             realPosition += mItemSize;
         }
         return realPosition;
+    }
+
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        removeCallbacks(adSwitchTask);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
     }
 }

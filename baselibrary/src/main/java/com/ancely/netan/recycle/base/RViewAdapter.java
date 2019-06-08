@@ -115,6 +115,7 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
             onBindHeaderHolder(holder, position, layoutId, sparseArrayCompat.get(layoutId));
         }
     }
+
     public void onBindHeaderHolder(RViewHolder holder, int position, int layoutId, Object o) {
     }
 
@@ -168,7 +169,7 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         if (datas == null) return;
         this.datas.clear();
         this.datas.addAll(datas);
-        notifyItemRangeChanged(mHeaderDatas.size(), this.datas.size()+1);
+        notifyItemRangeChanged(mHeaderDatas.size(), this.datas.size());
     }
 
 
@@ -195,7 +196,7 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
      * @return
      */
     public boolean isFooterViewPos(int position) {//举例， 2个头，2个inner，pos 0 1 2 3 ,false,4+true
-        return position >= getFooterViewCount() + datas.size()+getHeaderViewCount();
+        return position >= datas.size() + getHeaderViewCount();
     }
 
     public int getFooterViewCount() {

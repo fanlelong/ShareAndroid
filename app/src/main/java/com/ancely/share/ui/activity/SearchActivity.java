@@ -15,10 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.netan.request.utils.LogUtils;
 import com.ancely.share.R;
+import com.ancely.share.ShareApplication;
 import com.ancely.share.base.BaseActivity;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.HotTipsBean;
@@ -29,9 +29,9 @@ import com.ancely.share.utils.SizeUtils;
 import com.ancely.share.viewmodel.HotTipsVM;
 import com.ancely.share.views.FlowLayout;
 
-import java.util.Collections;
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -66,11 +66,38 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
     @Override
     protected void initDatas() {
         mModelP.startRequestService();
+        Single<List<HotTipsBean>> hotTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHotAll();
+        mModelP.disposable(hotTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(historyHotTips -> {
+            addTextView(mActSearchHotFll, historyHotTips, R.color.color_99ffe62e3d, R.color.color_e62e3d);
+
+        }));
+        Flowable<List<HotTipsBean>> historyTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHistoryAll();
+
+        mModelP.disposable(historyTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(historyHotTips -> {
+            if (historyHotTips.size() > 16) {
+                AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().deleteHistoryTip(historyHotTips.get(historyHotTips.size() - 1));
+            }
+            addTextView(mActSearchHistoryFll, historyHotTips, R.color.color_99ff0f66cc, R.color.color_0f66cc);
+        }));
     }
 
     @Override
     protected void initEvent() {
         mActMainToolbar.setNavigationOnClickListener(v -> finish());
+        mActSearchDeleteTv.setOnClickListener(v -> {
+            AppDatabase.getInstance(getApplicationContext()).getHotTipsDao().deleteAllHotTips();
+        });
+        mActSearchHistoryFll.setOnChildClickListener((view, datas) -> {
+            int index = mActSearchHistoryFll.indexOfChild(view);
+            List<HotTipsBean> hotTips = (List<HotTipsBean>) datas;
+            Toast.makeText(mContext, hotTips.get(index).getName(), Toast.LENGTH_SHORT).show();
+        });
+
+        mActSearchHotFll.setOnChildClickListener((view, datas) -> {
+            int index = mActSearchHotFll.indexOfChild(view);
+            List<HotTipsBean> hotTips = (List<HotTipsBean>) datas;
+            Toast.makeText(mContext, hotTips.get(index).getName(), Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
@@ -86,7 +113,7 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
 
     @Override
     public boolean isNeedCheckNetWork() {
-        return true;
+        return false;
     }
 
     @Override
@@ -133,7 +160,10 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {//键盘搜索点击事件
-                Toast.makeText(SearchActivity.this, s, Toast.LENGTH_SHORT).show();
+                HotTipsBean bean = new HotTipsBean();
+                bean.setName(s);
+                bean.setLinkType(1);
+                AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().insert(bean);
                 return false;
             }
 
@@ -147,49 +177,28 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
 
     @Override
     public void accessSuccess(ResponseBean<HttpResult<List<HotTipsBean>>> responseBean) {
-        super.accessSuccess(responseBean);
-        List<HotTipsBean> hotTips = responseBean.body.getData();
-        addTextView(hotTips);
-        mActSearchHotFll.setOnChildClickListener(new FlowLayout.OnChildClickListener() {
-            @Override
-            public void onClidlClick(View view) {
-                int index = mActSearchHotFll.indexOfChild(view);
-                String name = hotTips.get(index).getName();
-                Toast.makeText(mContext, name, Toast.LENGTH_SHORT).show();
-            }
-        });
+        Single<List<HotTipsBean>> hotTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHotAll();
+        mModelP.disposable(hotTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(historyHotTips -> {
+            addTextView(mActSearchHotFll, historyHotTips, R.color.color_99ffe62e3d, R.color.color_e62e3d);
+
+        }));
     }
 
-
-    private void addTextView(List<HotTipsBean> hotTips) {
-        mActSearchHotFll.removeAllViews();
+    private void addTextView(FlowLayout flowLayout, List<HotTipsBean> hotTips, int textColor, int strokeColor) {
+        flowLayout.removeAllViews();
+        flowLayout.setDatas(hotTips);
         for (HotTipsBean s : hotTips) {
             if (TextUtils.isEmpty(s.getName())) {
                 continue;
             }
-            GradientDrawable normolDrawable = DrawableUtils.creatDrable(this, R.color.color_ffffff, 2, 0.5f, R.color.color_e62e3d);
+            GradientDrawable normolDrawable = DrawableUtils.creatDrable(this, R.color.color_ffffff, 2, 0.5f, strokeColor);
             TextView textView = new TextView(this);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, SizeUtils.px2dp(12));
             textView.setBackgroundDrawable(normolDrawable);
             textView.setPadding(SizeUtils.px2dp(8), SizeUtils.px2dp(3), SizeUtils.px2dp(8), SizeUtils.px2dp(3));
-            textView.setTextColor(getResources().getColor(R.color.color_99ffe62e3d));
+            textView.setTextColor(getResources().getColor(textColor));
             textView.setText(s.getName());
-            mActSearchHotFll.addView(textView);
+            flowLayout.addView(textView);
         }
-    }
-
-    @Override
-    public void accessError(RequestErrBean errBean) {
-        super.accessError(errBean);
-        Single<List<HotTipsBean>> hotTips = AppDatabase.getInstance(this).getHotTipsDao().getAll();
-        mModelP.disposable(hotTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(hotTip -> {
-            Collections.reverse(hotTip);
-            addTextView(hotTip);
-            mActSearchHotFll.setOnChildClickListener(view -> {
-                int index = mActSearchHotFll.indexOfChild(view);
-                String name = hotTip.get(index).getName();
-                Toast.makeText(mContext, name, Toast.LENGTH_SHORT).show();
-            });
-        }));
     }
 }

@@ -84,11 +84,11 @@ public class HomeAdatper extends RViewAdapter<Article> {
 
     @Override
     public void onBindHeaderHolder(RViewHolder holder, int position, int layoutId, Object o) {
-        mLooperView = holder.getView(R.id.frag_home_banner);
         List<HomeBanner> homeBanners = (List<HomeBanner>) o;
         if (homeBanners.size() == 0) {
             return;
         }
+        mLooperView = holder.getView(R.id.frag_home_banner);
         mLooperView.setOnBannerItemClick(new AutoLooperView.BannerItemClick() {
             @Override
             public void onBannerItemClick(int position) {
@@ -107,12 +107,13 @@ public class HomeAdatper extends RViewAdapter<Article> {
             }
         };
         mLooperView.setDatas(autoLooperAdapter);
-        startTruning();
+        mLooperView.startTurning();
     }
 
     public void startTruning() {
         if (mLooperView != null) mLooperView.startTurning();
     }
+
 
     public void stopTurning() {
         if (mLooperView != null) mLooperView.stopTurning();
