@@ -11,9 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.ancely.netan.network.Net;
-import com.ancely.netan.network.NetType;
-import com.ancely.netan.receiver.NetWorkConnectReceiver;
 import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
@@ -34,7 +31,7 @@ import java.util.Map;
 public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends Fragment implements View.OnClickListener, iBaesView<T> {
 
     private boolean isLazyLoad;
-    private View mContentView;
+    protected View mContentView;
     protected Context mContext;
     protected VM mViewModel;
     protected Map<String, Object> mParams = new HashMap<>();

@@ -15,6 +15,7 @@ import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
 import com.ancely.share.bean.HomeCollectBean;
 import com.ancely.share.database.AppDatabase;
+import com.ancely.share.utils.RequestCode;
 import com.ancely.share.viewmodel.HomeVM;
 
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +49,10 @@ public class HomeModelP extends BaseModelP<HomeBean> {
         if (flag == IS_LOADING_MORE_DATA) {
             return request.getArticles((pageNum));
         }
+
+        if (flag == RequestCode.SEARCH_LIST_CODE) {
+            return request.queryArticle(pageNum, map);
+        }
         return Observable.zip(request.getTopArticles(), request.getArticles(pageNum), (topArticle, homeBeanHttpResult) -> {
             for (Article article : topArticle.getData()) {
                 article.setTop(true);
@@ -55,7 +60,6 @@ public class HomeModelP extends BaseModelP<HomeBean> {
             AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().deleteAllArticle();
             AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().insertAll(topArticle.getData());
             AppDatabase.getInstance(ShareApplication.getInstance()).articleDao().insertAll(homeBeanHttpResult.getData().getDatas());
-
             topArticle.getData().addAll(homeBeanHttpResult.getData().getDatas());
             homeBeanHttpResult.getData().setDatas(topArticle.getData());
             return homeBeanHttpResult;
@@ -68,7 +72,7 @@ public class HomeModelP extends BaseModelP<HomeBean> {
             super.handlerFirstObservable(emitter, request, params, flag);
             return;
         }
-        if (flag == 4) {
+        if (flag == RequestCode.HOME_COLLECT_CODE) {
             int id = (int) params.get("id");
             int position = (int) params.get("position");
             boolean isCollect = (boolean) params.get("isCollect");

@@ -5,16 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="15dp"
     android:foreground="?attr/selectableItemBackground"
-    android:paddingBottom="25dp">
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp">
 
     <TextView
         android:id="@+id/item_frg_home_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:layout_marginRight="8dp"
         android:background="@drawable/bg_stroke_r_4_color_e62e3d"
         android:paddingLeft="6dp"
         android:paddingTop="2dp"
@@ -24,41 +23,7 @@
         android:textColor="@color/color_e62e3d"
         android:textSize="10sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
-    <TextView
-        android:id="@+id/item_frg_new_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:background="@drawable/bg_stroke_r_4_color_0f66cc"
-        android:paddingLeft="6dp"
-        android:paddingTop="3dp"
-        android:paddingRight="6dp"
-        android:paddingBottom="3dp"
-        android:text="@string/new_fresh"
-        android:textColor="@color/color_0f66cc"
-        android:textSize="10sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/item_frg_home_tv"
-        app:layout_constraintLeft_toRightOf="@id/item_frg_home_tv"
-        app:layout_constraintTop_toTopOf="@+id/item_frg_home_tv"/>
-
-    <TextView
-        android:id="@+id/item_frg_project_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:background="@drawable/bg_stroke_r_4_color_0f66cc"
-        android:paddingLeft="6dp"
-        android:paddingTop="2dp"
-        android:paddingRight="6dp"
-        android:paddingBottom="2dp"
-        android:text="新"
-        android:textColor="@color/color_0f66cc"
-        android:textSize="10sp"
-        app:layout_constraintLeft_toRightOf="@id/item_frg_new_tv"
-        app:layout_constraintStart_toEndOf="@+id/item_frg_home_tv"
         app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
@@ -66,12 +31,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="1dp"
         android:textColor="@color/color_666666"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/item_frg_project_tv"
-        app:layout_constraintLeft_toRightOf="@+id/item_frg_project_tv"
-        app:layout_constraintStart_toEndOf="@+id/item_frg_project_tv"
-        app:layout_constraintTop_toTopOf="@+id/item_frg_project_tv"
+        app:layout_constraintStart_toEndOf="@+id/item_frg_home_tv"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/login"/>
 
     <TextView
@@ -81,10 +45,9 @@
         android:layout_marginEnd="15dp"
         android:textColor="@color/color_666666"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/item_frg_project_tv"
+        app:layout_constraintBottom_toBottomOf="@+id/item_frg_home_auther_tv"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/item_frg_project_tv"
+        app:layout_constraintTop_toTopOf="@+id/item_frg_home_auther_tv"
         tools:text="1dfs"/>
 
     <TextView
@@ -92,7 +55,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="15dp"
         android:textColor="@color/color_333333"
         android:textSize="16sp"
@@ -105,19 +68,18 @@
         android:id="@+id/item_frg_home_like_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
         android:src="@drawable/ic_like_not"
+        android:layout_marginEnd="15dp"
         app:layout_constraintBottom_toBottomOf="@+id/item_frg_home_chapter_tv"
         app:layout_constraintRight_toRightOf="parent"
-
-        app:layout_constraintTop_toTopOf="@+id/item_frg_home_chapter_tv"/>
+        />
 
 
     <TextView
         android:id="@+id/item_frg_home_chapter_tv"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="15dp"
         android:gravity="bottom"
         android:textColor="@color/color_666666"
@@ -133,7 +95,7 @@
         android:layout_width="100dp"
         android:layout_height="90dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

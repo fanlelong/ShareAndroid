@@ -59,4 +59,11 @@ public interface ShareApi {
 
     @GET("hotkey/json")
     Observable<HttpResult<List<HotTipsBean>>> getHotTips();
+
+    /**
+     * 搜索列表
+     */
+    @FormUrlEncoded
+    @POST("article/query/{pageNum}/json")
+    Observable<HttpResult<HomeBean>> queryArticle(@Path("pageNum") int pageNum, @FieldMap Map<String, Object> params);
 }

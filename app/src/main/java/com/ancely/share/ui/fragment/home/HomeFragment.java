@@ -17,7 +17,7 @@ import com.ancely.netan.request.mvvm.ModelP;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.share.R;
-import com.ancely.share.adapter.HomeAdatper;
+import com.ancely.share.adapter.ArticleAdatper;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.base.RViewFragment;
 import com.ancely.share.bean.Article;
@@ -27,12 +27,11 @@ import com.ancely.share.database.AppDatabase;
 import com.ancely.share.model.HomeModelP;
 import com.ancely.share.ui.activity.LoginActivity;
 import com.ancely.share.utils.PreferenceUtils;
+import com.ancely.share.utils.RequestCode;
 import com.ancely.share.viewmodel.HomeVM;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -48,11 +47,10 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     private RecyclerView mFragHomeRv;
-    private HomeAdatper mAdatper;
+    private ArticleAdatper mAdatper;
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mFragHomeRefresh;
     private HomeModelP mModelP;
-    private Map<String, Object> params = new HashMap<>();
     private List<HomeBanner> bannerDatas = new ArrayList<>();
 
     @Override
@@ -78,7 +76,7 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
         mFragHomeRefresh = findViewById(R.id.frag_home_refresh);
         mLayoutManager = new LinearLayoutManager(getContext());
         HomeBean datas = new HomeBean();
-        mAdatper = new HomeAdatper(datas);
+        mAdatper = new ArticleAdatper(datas);
         mModelP = new HomeModelP(this, HomeVM.class);
         mAdatper.addHeaderView(R.layout.item_banner, bannerDatas);
         mAdatper.addFooterView(progressView);
@@ -122,10 +120,10 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
             if (!userNmae) {
                 startActivity(new Intent(getContext(), LoginActivity.class));
             } else {
-                params.put("id", colleckId);
-                params.put("position", position);
-                params.put("isCollect", article.isCollect());
-                mModelP.startRequestService(params, 4, false);
+                mParams.put("id", colleckId);
+                mParams.put("position", position);
+                mParams.put("isCollect", article.isCollect());
+                mModelP.startRequestService(mParams, RequestCode.HOME_COLLECT_CODE, false);
             }
         });
     }
@@ -194,12 +192,12 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
      */
     private void requestDatasFromServer(boolean isLoadMore) {
         mFragHomeRefresh.setRefreshing(true);
-        params.put("pageNum", getHelper().getmCurrentPageNum());
+        mParams.put("pageNum", getHelper().getmCurrentPageNum());
         if (isLoadMore) {
-            mModelP.startRequestService(params, ModelP.IS_LOADING_MORE_DATA);
+            mModelP.startRequestService(mParams, ModelP.IS_LOADING_MORE_DATA);
             return;
         }
-        mModelP.startRequestService(params);
+        mModelP.startRequestService(mParams);
     }
 
     @Override

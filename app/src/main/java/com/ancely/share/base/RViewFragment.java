@@ -3,7 +3,9 @@ package com.ancely.share.base;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -12,6 +14,9 @@ import com.ancely.netan.recycle.SwipeRefreshHelper;
 import com.ancely.netan.recycle.listener.RViewCreate;
 import com.ancely.netan.recycle.listener.RViewScrollListener;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
+import com.ancely.share.R;
+import com.ancely.share.utils.SizeUtils;
+import com.ancely.share.views.CustomRecyclerViewDivider;
 
 import java.util.List;
 
@@ -22,13 +27,14 @@ import java.util.List;
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/2 3:40 PM
  */
-public abstract class RViewFragment<VM extends BaseResultVM<T>, T, R> extends BaseFragment<VM, T> implements RViewCreate<R>, SwipeRefreshHelper.SwipeRefreshListener, RViewScrollListener {
-    private RViewHelper<R> mHelper;
+public abstract class RViewFragment<VM extends BaseResultVM<T>, T, B> extends BaseFragment<VM, T> implements RViewCreate<B>, SwipeRefreshHelper.SwipeRefreshListener, RViewScrollListener {
+    private RViewHelper<B> mHelper;
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mHelper = new RViewHelper.Builder<>(this, this, this).build();
+        progressView.setVisibility(View.GONE);
         progressView.setOnClickListener(v -> {
             if (!isResevierrequest) {
                 setProgressStatues(LOADING_FLAG);
@@ -42,7 +48,7 @@ public abstract class RViewFragment<VM extends BaseResultVM<T>, T, R> extends Ba
         return null;
     }
 
-    public RViewHelper<R> getHelper() {
+    public RViewHelper<B> getHelper() {
         return mHelper;
     }
 
@@ -53,7 +59,11 @@ public abstract class RViewFragment<VM extends BaseResultVM<T>, T, R> extends Ba
 
     @Override
     public RecyclerView.ItemDecoration createItemDecoration() {
-        return null;
+        return new CustomRecyclerViewDivider(mContext, LinearLayoutManager.HORIZONTAL,
+                2,
+                ContextCompat.getColor(mContext, R.color.color_e0e0e0),
+                SizeUtils.px2dp(15),
+                SizeUtils.px2dp(15));
     }
 
     @Override
@@ -86,21 +96,21 @@ public abstract class RViewFragment<VM extends BaseResultVM<T>, T, R> extends Ba
 
     }
 
-    public void notifyAdapterDataSetChanged(List<R> datas) {
+    public void notifyAdapterDataSetChanged(List<B> datas) {
 
         mHelper.notifyAdapterDataSetChanged(datas);
     }
 
-    public void notifyLocalDataSetChanged(List<R> datas) {
+    public void notifyLocalDataSetChanged(List<B> datas) {
 
         mHelper.notifyLocalDataSetChanged(datas);
     }
 
-    protected void notifyItemChangedReomeHeader(List<R> datas) {
+    protected void notifyItemChangedReomeHeader(List<B> datas) {
         mHelper.notifyItemChangedReomeHeader(datas);
     }
 
-    protected void notifyItemChangedReomeHeaderToLocal(List<R> datas) {
+    protected void notifyItemChangedReomeHeaderToLocal(List<B> datas) {
         mHelper.notifyItemChangedReomeHeaderToLocal(datas);
     }
 

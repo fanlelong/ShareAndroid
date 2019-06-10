@@ -33,6 +33,9 @@ public interface HotTipsDao {
     @Query("SELECT * FROM hot_tips WHERE link_type = 1 ORDER BY hotTip DESC")
     Flowable<List<HotTipsBean>> getHistoryAll();
 
+    @Query("SELECT * FROM hot_tips WHERE link_type = 1 AND name = :searchName ")
+    List<HotTipsBean> getHistoryForName(String searchName);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(HotTipsBean article);
 

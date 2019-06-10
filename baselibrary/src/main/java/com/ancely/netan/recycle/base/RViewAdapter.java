@@ -127,10 +127,11 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
+
         if (isHeaderViewPos(position)) {
             return mHeaderDatas.keyAt(position);
-        } else if (isFooterViewPos(position)) {
-            return mFooterViews.keyAt(position - mFooterViews.size() - datas.size());
+        } else if (isFooterViewPos(position)) {//itemCount = 22  positin = 20最后一个  foot有2个  data大小为20
+            return mFooterViews.keyAt(position - mHeaderDatas.size() - datas.size());
         }
         if (hasMultistyle())
             return itemStyle.getItemViewType(datas.get(position - mHeaderDatas.size()), position);

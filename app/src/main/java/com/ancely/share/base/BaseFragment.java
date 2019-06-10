@@ -53,7 +53,7 @@ public abstract class BaseFragment<VM extends BaseResultVM<T>, T> extends BaseMo
         if (loadFlag == LOADING_FLAG) {//显示加载更多
             setFootViewStatus(true, "上拉加载更多..");
         } else if (loadFlag == NO_LOADING_MORE_FLAG) {//显示无更多数据
-            setFootViewStatus(false, "没有更多了..已经到底部了..");
+            setFootViewStatus(false, "-------------- 没有更多了 ------------");
         } else if (loadFlag == NETWROK_ERROR) {
             isResevierrequest = false;
             setFootViewStatus(false, "网络出小差了,点击重新加载...");
@@ -67,5 +67,8 @@ public abstract class BaseFragment<VM extends BaseResultVM<T>, T> extends BaseMo
             mProgressBar.setVisibility(View.GONE);
         }
         mErrorText.setText(s);
+    }
+    public void scrollTop(){
+
     }
 }

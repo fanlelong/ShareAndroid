@@ -3,6 +3,7 @@ package com.ancely.share.ui.activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +25,7 @@ import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.HotTipsBean;
 import com.ancely.share.database.AppDatabase;
 import com.ancely.share.model.HotTipsModelP;
+import com.ancely.share.ui.fragment.home.SearchListFragment;
 import com.ancely.share.utils.DrawableUtils;
 import com.ancely.share.utils.SizeUtils;
 import com.ancely.share.viewmodel.HotTipsVM;
@@ -88,16 +90,21 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
             AppDatabase.getInstance(getApplicationContext()).getHotTipsDao().deleteAllHotTips();
         });
         mActSearchHistoryFll.setOnChildClickListener((view, datas) -> {
-            int index = mActSearchHistoryFll.indexOfChild(view);
-            List<HotTipsBean> hotTips = (List<HotTipsBean>) datas;
-            Toast.makeText(mContext, hotTips.get(index).getName(), Toast.LENGTH_SHORT).show();
+            jumpArticesLists(mActSearchHistoryFll, view, datas);
         });
 
         mActSearchHotFll.setOnChildClickListener((view, datas) -> {
-            int index = mActSearchHotFll.indexOfChild(view);
-            List<HotTipsBean> hotTips = (List<HotTipsBean>) datas;
-            Toast.makeText(mContext, hotTips.get(index).getName(), Toast.LENGTH_SHORT).show();
+            jumpArticesLists(mActSearchHotFll, view, datas);
         });
+    }
+
+
+    private void jumpArticesLists(FlowLayout flowLayout, View view, Object datas) {
+        int index = flowLayout.indexOfChild(view);
+        List<HotTipsBean> hotTips = (List<HotTipsBean>) datas;
+        Bundle bundle = new Bundle();
+        bundle.putString("searchName", hotTips.get(index).getName());
+        SinglerFragActivity.LaunchAct(mContext, SearchListFragment.class, bundle, hotTips.get(index).getName());
     }
 
     @Override
@@ -160,10 +167,17 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {//键盘搜索点击事件
-                HotTipsBean bean = new HotTipsBean();
-                bean.setName(s);
-                bean.setLinkType(1);
-                AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().insert(bean);
+
+                List<HotTipsBean> historyForName = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHistoryForName(s);
+                if (historyForName.size() == 0) {
+                    HotTipsBean bean = new HotTipsBean();
+                    bean.setName(s);
+                    bean.setLinkType(1);
+                    AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().insert(bean);
+                }
+                Bundle bundle = new Bundle();
+                bundle.putString("searchName", s);
+                SinglerFragActivity.LaunchAct(mContext, SearchListFragment.class, bundle, s);
                 return false;
             }
 

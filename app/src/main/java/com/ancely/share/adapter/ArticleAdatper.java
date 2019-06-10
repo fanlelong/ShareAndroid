@@ -28,11 +28,11 @@ import java.util.List;
  *  @创建时间:  2019/6/2 3:48 PM
  *  @描述：    TODO
  */
-public class HomeAdatper extends RViewAdapter<Article> {
+public class ArticleAdatper extends RViewAdapter<Article> {
 
     private AutoLooperView mLooperView;
 
-    public HomeAdatper(HomeBean datas) {
+    public ArticleAdatper(HomeBean datas) {
         super(datas.getDatas());
         addItemStyle(new RViewItem<Article>() {
             @Override
@@ -61,14 +61,18 @@ public class HomeAdatper extends RViewAdapter<Article> {
                     Glide.with(image).load(entry.getEnvelopePic()).into(image);
                 }
                 if (entry.isTop()) {//置顶
-                    holder.setVisible(R.id.item_frg_home_tv, true);
-                } else if (entry.getType() == 0) {
-                    holder.setVisible(R.id.item_frg_home_tv, false);
-                }
-                if (entry.getTags() != null && entry.getTags().size() > 0) {
-                    holder.setText(R.id.item_frg_project_tv, entry.getTags().get(0).getName());
+                    holder.setBackgroundRes(R.id.item_frg_home_tv, R.drawable.bg_stroke_r_4_color_e62e3d)
+                            .setTextColorRes(R.id.item_frg_home_tv, R.color.color_e62e3d)
+                            .setText(R.id.item_frg_home_tv, R.string.top_tip);
                 } else {
-                    holder.setText(R.id.item_frg_project_tv, R.string.new_fresh);
+                    holder.setBackgroundRes(R.id.item_frg_home_tv, R.drawable.bg_stroke_r_4_color_0f66cc)
+                            .setTextColorRes(R.id.item_frg_home_tv, R.color.color_0f66cc);
+                    if (entry.getTags() != null && entry.getTags().size() > 0) {
+                        holder.setText(R.id.item_frg_home_tv, entry.getTags().get(0).getName());
+                    } else {
+                        holder.setText(R.id.item_frg_home_tv, "新");
+                    }
+
                 }
                 ImageView like = holder.getView(R.id.item_frg_home_like_iv);
                 like.setImageResource(entry.isCollect() ? R.drawable.ic_like : R.drawable.ic_like_not);
