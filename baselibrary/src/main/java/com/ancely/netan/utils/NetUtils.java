@@ -11,7 +11,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.ancely.netan.network.NetChangerManager;
+import com.ancely.netan.NetWorkManager;
 import com.ancely.netan.network.NetType;
 
 public class NetUtils {
@@ -42,7 +42,7 @@ public class NetUtils {
     }
 
     public static NetType getNetType() {
-        ConnectivityManager cm = (ConnectivityManager) NetChangerManager.getDefault().getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) NetWorkManager.getInstance().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return NetType.NONE;
         NetworkInfo networkInfo = cm.getActiveNetworkInfo();
         if (networkInfo == null) {

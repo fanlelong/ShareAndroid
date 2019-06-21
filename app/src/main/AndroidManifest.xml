@@ -47,6 +47,10 @@
         </activity>
         <activity android:name=".ui.activity.SearchActivity"/>
         <activity android:name=".ui.activity.SinglerFragActivity"/>
+        <activity android:name=".ui.activity.test.TestActivity">
+
+
+        </activity>
     </application>
 
 </manifest>

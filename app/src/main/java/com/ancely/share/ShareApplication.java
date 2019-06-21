@@ -5,6 +5,7 @@ import android.app.Application;
 import com.ancely.netan.NetWorkManager;
 import com.ancely.share.others.HeaderInterceptor;
 import com.ancely.share.others.SaveCookieInterceptor;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +33,10 @@ public class ShareApplication extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
-
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            return;
+        }
+        LeakCanary.install(this);
         List<Interceptor> interceptors = new ArrayList<>();
         interceptors.add(new HeaderInterceptor());
         interceptors.add(new SaveCookieInterceptor());

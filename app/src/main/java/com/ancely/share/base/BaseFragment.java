@@ -71,4 +71,9 @@ public abstract class BaseFragment<VM extends BaseResultVM<T>, T> extends BaseMo
     public void scrollTop(){
 
     }
+
+    @Override
+    protected <V extends View> V findViewById(int id) {
+        return (V) mContentView.findViewById(id);
+    }
 }

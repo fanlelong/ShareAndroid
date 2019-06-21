@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkRequest;
 import android.os.Build;
 
+import com.ancely.netan.NetWorkManager;
 import com.ancely.netan.network.call.NetworkCallbackImpl;
 import com.ancely.netan.receiver.NetWorkConnectReceiver;
 
@@ -59,7 +60,7 @@ public class NetChangerManager {
             ConnectivityManager.NetworkCallback networkCallback = new NetworkCallbackImpl(mNetChange);
             NetworkRequest.Builder builder = new NetworkRequest.Builder();
             NetworkRequest request = builder.build();
-            ConnectivityManager cm = (ConnectivityManager) NetChangerManager.getDefault().getApplication().getSystemService(Context.CONNECTIVITY_SERVICE);
+            ConnectivityManager cm = (ConnectivityManager) NetWorkManager.getInstance().getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
             if (cm != null) {
                 cm.registerNetworkCallback(request, networkCallback);
             }

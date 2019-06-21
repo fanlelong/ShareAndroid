@@ -1,6 +1,7 @@
 package com.ancely.share.ui.fragment.home;
 
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -47,7 +48,14 @@ public class SearchListFragment extends RViewFragment<HomeVM, HomeBean, Article>
                 mParams.put("k", searchName);
             }
         }
-        requestDatasFromServer(false);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SystemClock.sleep(3000);
+                requestDatasFromServer(false);
+
+            }
+        }).start();
     }
 
 
@@ -55,7 +63,7 @@ public class SearchListFragment extends RViewFragment<HomeVM, HomeBean, Article>
      * 请求服务器数据
      */
     private void requestDatasFromServer(boolean isLoadMore) {
-        mFragSearchRefresh.setRefreshing(true);
+//        mFragSearchRefresh.setRefreshing(true);
         mParams.put("pageNum", getHelper().getmCurrentPageNum());
         if (isLoadMore) {
             mModelP.startRequestService(mParams, ModelP.IS_LOADING_MORE_DATA);
@@ -122,7 +130,7 @@ public class SearchListFragment extends RViewFragment<HomeVM, HomeBean, Article>
 
     @Override
     public void scrollTop() {
-        if (mLayoutManager.findFirstVisibleItemPosition() > 20) {
+        if (mLayoutManager.findFirstVisibleItemPosition() > pageSize()) {
             mFragSearchRv.scrollToPosition(0);
         } else {
             mFragSearchRv.smoothScrollToPosition(0);
@@ -131,8 +139,7 @@ public class SearchListFragment extends RViewFragment<HomeVM, HomeBean, Article>
 
     @Override
     public void accessSuccess(ResponseBean<HttpResult<HomeBean>> responseBean) {
-        progressView.setVisibility(View.VISIBLE
-        );
+        progressView.setVisibility(View.VISIBLE);
         List<Article> datas = responseBean.body.getData().getDatas();
         if (datas == null || datas.size() == 0) {
             setProgressStatues(NO_LOADING_MORE_FLAG);

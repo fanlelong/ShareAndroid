@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="100dp"
+    >
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="UselessParent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <com.ancely.share.views.chart.PieChart
+                android:id="@+id/frag_capital_pchart"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:visibility="visible"/>
+
+            <com.ancely.share.views.test.BarChart
+                android:id="@+id/barchart"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                />
+
+            <com.ancely.share.views.test.BrokenLineView
+                android:id="@+id/broken_lineview"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                />
+
+            <com.ancely.share.views.chart.PieChartView
+                android:id="@+id/piechartview"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"/>
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>
+
