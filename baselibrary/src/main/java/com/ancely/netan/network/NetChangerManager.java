@@ -22,7 +22,7 @@ import com.ancely.netan.receiver.NetWorkConnectReceiver;
 public class NetChangerManager {
     private final NetWorkConnectReceiver mReceiver;
     private Context mApplication;
-    private static  NetChangerManager instance;
+    private static NetChangerManager instance;
     private NetChangeImpl mNetChange;
 
     private NetChangerManager() {

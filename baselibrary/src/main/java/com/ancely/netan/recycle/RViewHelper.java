@@ -3,9 +3,7 @@ package com.ancely.netan.recycle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.ancely.netan.recycle.base.RViewAdapter;
 import com.ancely.netan.recycle.listener.RViewCreate;
@@ -136,7 +134,7 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
         }
         isLoadMoreFlag = datas.size() >= mPageSize && mSupportPaging;
         if (mCurrentPageNum == mStartPageNum) {
-            mRecycleViewAdapter.updataRangeDatas(datas);
+            mRecycleViewAdapter.updataDatas(datas);
         } else {
             mRecycleViewAdapter.addRangeDatas(datas);
         }
@@ -149,7 +147,7 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
         }
         isLoadMoreFlag = false;
         if (mCurrentPageNum == mStartPageNum) {
-            mRecycleViewAdapter.updataRangeDatas(datas);
+            mRecycleViewAdapter.updataDatas(datas);
         } else {
             mRecycleViewAdapter.addRangeDatas(datas);
         }

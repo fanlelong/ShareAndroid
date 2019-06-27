@@ -3,19 +3,18 @@ package com.ancely.share.views.test;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.View;
 import android.view.ViewGroup;
 
+import com.ancely.share.utils.SizeUtils;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,11 +25,15 @@ public class BrokenLineView extends RecyclerView {
 
     private int maxValue;
     private int minValue;
-    private List<Integer> data = new ArrayList<>();
+    private List<ChartBean> data = new ArrayList<>();
     private Adapter adapter;
     private Paint mLinePaint;
+    private Paint mTextPaint;
     private int mWidth;
     private int mHeight;
+    private Rect mTextBound;
+    private List<String> present = new ArrayList<>();
+    private int mPaddingLeft, mPaddingRight;
 
     public BrokenLineView(Context context) {
         this(context, null);
@@ -43,11 +46,25 @@ public class BrokenLineView extends RecyclerView {
     }
 
     private void init() {
+        present.add("-20%");
+        present.add("0%");
+        present.add("20%");
+        present.add("40%");
+        present.add("60%");
+        present.add("80%");
+        present.add("100%");
+
         mLinePaint = new Paint();
+        mTextPaint = new Paint();
+        mTextPaint.setTextSize(SizeUtils.px2dp(10));
+        mTextPaint.setColor(0xffc8c8c8);
+        mTextPaint.setAntiAlias(true);//抗锯齿
+        mTextBound = new Rect();
+
         //初始化画笔
         mLinePaint.setStyle(Paint.Style.FILL);//设置画笔类型
         mLinePaint.setAntiAlias(true);//抗锯齿
-        mLinePaint.setColor(Color.BLACK);
+        mLinePaint.setColor(0xffe6e6e6);
         mLinePaint.setStrokeWidth(10);
 
 
@@ -59,85 +76,57 @@ public class BrokenLineView extends RecyclerView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        int paddingLeft = getPaddingLeft();
-        mWidth = w - paddingLeft - getPaddingRight();
-        mHeight = h - getPaddingBottom() - getPaddingTop();
+        mPaddingLeft = getPaddingLeft();
+        mPaddingRight = getPaddingRight();
+
+        mWidth = w - mPaddingLeft / 2 - mPaddingRight;
+        mHeight = h;
     }
 
-    public void setData(List<Integer> d) {
+    public void setData(List<ChartBean> d) {
         if (data != null) {
             data.clear();
             data.addAll(d);
-            Collections.sort(d);
-            minValue = d.get(0);
-            maxValue = d.get(d.size() - 1);
             adapter.notifyDataSetChanged();
         }
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        canvas.save();
-        canvas.translate(0, mHeight);
-        canvas.drawPoint(0, 0, mLinePaint);
-
-        mLinePaint.setStrokeWidth(1);
-        canvas.drawLine(0, 0, mWidth, 0, mLinePaint);
-
-        canvas.drawLine(0, 0, 0, -mHeight * 0.8f, mLinePaint);
-//
-//        canvas.drawLine(mWidth - 120, 0, (mWidth - 120) * 0.98f, (mWidth - 120) * 0.02f, mLinePaint);
-//        canvas.drawLine(mWidth - 120, 0, (mWidth - 120) * 0.98f, -(mWidth - 120) * 0.02f, mLinePaint);
-////
-//        canvas.drawLine(0, -mHeight * 0.8f, (-mHeight * 0.8f) * 0.02f, (-mHeight * 0.8f) * 0.98f, mLinePaint);
-//        canvas.drawLine(0, -mHeight * 0.8f, -(-mHeight * 0.8f) * 0.02f, (-mHeight * 0.8f) * 0.98f, mLinePaint);
-        int linwWidth = mWidth;
-        int charHeight = (int) (-mHeight * 0.8f);
-        int num = linwWidth / 240;
-        int heightNum = -charHeight / 120;
-        for (int i = 1; i < num; i++) {
-            canvas.drawLine(linwWidth * 1.f * i / num, 0, linwWidth * 1.f * i / num, -10, mLinePaint);
-
-        }
-        setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-        mLinePaint.setPathEffect(new DashPathEffect(new float[]{8, 4, 16, 4}, 6));
-        for (int i = 0; i < heightNum; i++) {
-            canvas.drawLine(0, charHeight * 1.f * i / heightNum, linwWidth, charHeight * 1.f * i / heightNum, mLinePaint);
-        }
-        mLinePaint.setPathEffect(null);
-        canvas.restore();
         super.onDraw(canvas);
+        canvas.save();
+        canvas.translate(mPaddingLeft / 2, mHeight - getPaddingBottom());
+        mLinePaint.setStrokeWidth(1);
+        int linwWidth = mWidth;
+        for (int i = 1; i < present.size(); i++) {
+            canvas.drawLine(0, -SizeUtils.px2dp(41) * 1.f * i, linwWidth, -SizeUtils.px2dp(41) * 1.f * i, mLinePaint);
+            if (i > 1) {
+                mTextPaint.getTextBounds(present.get(i), 0, present.get(i).length(), mTextBound);
+                canvas.drawText(present.get(i), 0, -(SizeUtils.px2dp(41) * 1.f * i) + mTextBound.height() + SizeUtils.px2dpH(3), mTextPaint);
+            }
+
+        }
+        canvas.restore();
     }
+
 
     class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
 
+        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            Item item = new Item(getContext());
-            item.setMinValue(minValue);
-            item.setMaxValue(maxValue);
-            LayoutParams layoutParams = new LayoutParams(200, ViewGroup.LayoutParams.MATCH_PARENT);//这个数字表示每一个item的宽度
+        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            RectItem item = new RectItem(getContext());
+            LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);//这个数字表示每一个item的宽度
             item.setLayoutParams(layoutParams);
             return new ViewHolder(item);
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            if (position == 0) {
-                holder.item.setDrawLeftLine(false);
-            } else {
-                holder.item.setDrawLeftLine(true);
-                holder.item.setlastValue((data.get(position - 1)));
-            }
-            holder.item.setCurrentValue((data.get(position)));
-
-
-            if (position == data.size() - 1) {
-                holder.item.setDrawRightLine(false);
-            } else {
-                holder.item.setDrawRightLine(true);
-                holder.item.setNextValue((data.get(position + 1)));
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            holder.item.setText(data.get(position).title, data.get(position).percent);
+            if (position==0) {
+                holder.item.setBackgroundColor(0x55ff0000);
             }
         }
 
@@ -147,11 +136,12 @@ public class BrokenLineView extends RecyclerView {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            Item item;
+            RectItem item;
 
-            public ViewHolder(View itemView) {
+            public ViewHolder(RectItem itemView) {
                 super(itemView);
-                this.item = (Item) itemView;
+                this.item = itemView;
+
             }
         }
     }

@@ -14,6 +14,7 @@ import com.ancely.share.R;
 import com.ancely.share.base.BaseActivity;
 import com.ancely.share.base.BaseFragment;
 
+import java.lang.ref.WeakReference;
 import java.util.Stack;
 
 /*
@@ -25,7 +26,7 @@ import java.util.Stack;
  *  @描述：    TODO
  */
 public class SinglerFragActivity extends BaseActivity {
-    private static Class clazz;
+    private static WeakReference<Class> sWeakReference;
     private Stack<BaseFragment> mFrgStack;
     private Toolbar mActMainToolbar;
     private static String title;
@@ -70,10 +71,10 @@ public class SinglerFragActivity extends BaseActivity {
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         BaseFragment fragment = null;
         try {
-            if (clazz == null) {
+            if (sWeakReference == null || sWeakReference.get() == null) {
                 return;
             }
-            fragment = (BaseFragment) clazz.newInstance();
+            fragment = (BaseFragment) sWeakReference.get().newInstance();
             pushActivity(fragment);
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,7 +121,7 @@ public class SinglerFragActivity extends BaseActivity {
     @Override
     public void finish() {
         popActivity(currentfrg());
-        clazz = null;
+        sWeakReference.clear();
         super.finish();
     }
 
@@ -130,7 +131,7 @@ public class SinglerFragActivity extends BaseActivity {
     }
 
     public static void LaunchAct(Context context, Class c, Bundle bundle) {
-        clazz = c;
+        sWeakReference = new WeakReference<>(c);
         Intent intent = new Intent(context, SinglerFragActivity.class);
         if (bundle != null) {
             intent.putExtras(bundle);
@@ -142,7 +143,7 @@ public class SinglerFragActivity extends BaseActivity {
     }
 
     public static void LaunchAct(Context context, Class c, Bundle bundle, String t) {
-        clazz = c;
+        sWeakReference = new WeakReference<>(c);
         title = t;
         Intent intent = new Intent(context, SinglerFragActivity.class);
         if (bundle != null) {

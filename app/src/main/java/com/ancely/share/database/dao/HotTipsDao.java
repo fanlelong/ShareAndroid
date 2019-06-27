@@ -11,9 +11,6 @@ import com.ancely.share.bean.HotTipsBean;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
-import io.reactivex.Single;
-
 /*
  *  @项目名：  ShareAndroid
  *  @包名：    com.ancely.share.database.dao
@@ -27,11 +24,11 @@ public interface HotTipsDao {
 
     //简单sql语句，查询article表所有的column
     @Query("SELECT * FROM hot_tips WHERE visible = 1 AND link_type = 0")
-    Single<List<HotTipsBean>> getHotAll();
+    List<HotTipsBean> getHotAll();
 
 
     @Query("SELECT * FROM hot_tips WHERE link_type = 1 ORDER BY hotTip DESC")
-    Flowable<List<HotTipsBean>> getHistoryAll();
+    List<HotTipsBean> getHistoryAll();
 
     @Query("SELECT * FROM hot_tips WHERE link_type = 1 AND name = :searchName ")
     List<HotTipsBean> getHistoryForName(String searchName);

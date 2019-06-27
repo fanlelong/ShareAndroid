@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'com.novoda.bintray-release'//添加
 android {
     compileSdkVersion 28
 
@@ -15,6 +15,10 @@ android {
 
     }
 
+    lintOptions {
+        abortOnError false
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -24,6 +28,13 @@ android {
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+    allprojects {
+        gradle.projectsEvaluated {
+            tasks.withType(JavaCompile) {
+                options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+            }
+        }
     }
 }
 
@@ -61,7 +72,7 @@ dependencies {
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
     api 'android.arch.persistence.room:testing:1.1.1'
     api 'android.arch.persistence.room:rxjava2:1.1.1'
-
+//    api 'com.ancely.netan:baselibrary:1.0.0'
     // Navigation
     def nav_version = "1.0.0-alpha06"
     api "android.arch.navigation:navigation-fragment:$nav_version"
@@ -69,3 +80,14 @@ dependencies {
     androidTestImplementation "android.arch.navigation:navigation-testing:$nav_version"
 
 }
+//添加 e582ad69ea41c4cfc134205ec3f33376846bdc68
+publish {
+    userOrg = 'fanlelong'//bintray.com你的用户名
+    groupId = 'com.ancely.netan'//jcenter上的路径
+    artifactId = 'baselibrary'//项目名称
+    publishVersion = '1.0.0'//版本号
+    desc = 'net request'//描述，不重要
+    website = 'https://github.com/fanlelong'
+//网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
+}
+//./gradlew clean build bintrayUpload -PbintrayUser=fanlelong -PbintrayKey=e582ad69ea41c4cfc134205ec3f33376846bdc68 -PdryRun=false

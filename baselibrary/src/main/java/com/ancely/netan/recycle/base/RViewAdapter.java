@@ -164,16 +164,6 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
         notifyDataSetChanged();
     }
 
-
-    //更新数据
-    public void updataRangeDatas(List<T> datas) {
-        if (datas == null) return;
-        this.datas.clear();
-        this.datas.addAll(datas);
-        notifyItemRangeChanged(mHeaderDatas.size(), this.datas.size());
-    }
-
-
     public void setItemListener(ItemListener<T> itemListener) {
         this.itemListener = itemListener;
     }

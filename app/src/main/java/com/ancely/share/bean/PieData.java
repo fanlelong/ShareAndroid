@@ -1,5 +1,7 @@
 package com.ancely.share.bean;
 
+import java.util.List;
+
 public class PieData {
 
     private String name;
@@ -7,6 +9,15 @@ public class PieData {
     private float percentage;
     private int color = 0;
     private float angle = 0;
+    private List<Integer> mColors;
+
+    public List<Integer> getColors() {
+        return mColors;
+    }
+
+    public void setColors(List<Integer> colors) {
+        mColors = colors;
+    }
 
     public String getName() {
         return name;

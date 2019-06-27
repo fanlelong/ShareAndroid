@@ -4,13 +4,10 @@ import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.ancely.netan.network.Net;
 import com.ancely.netan.network.NetChangerManager;
-import com.ancely.netan.network.NetType;
 import com.ancely.netan.recycle.base.RViewAdapter;
 import com.ancely.netan.recycle.listener.ItemListener;
 import com.ancely.netan.request.mvvm.ModelP;
@@ -71,7 +68,6 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
 
     @Override
     protected void initView() {
-        NetChangerManager.getDefault().registerObserver(this);
         mFragHomeRv = findViewById(R.id.frag_home_rv);
         mFragHomeRefresh = findViewById(R.id.frag_home_refresh);
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -206,24 +202,24 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     }
 
 
-    @Net
-    public void netWork(NetType netType) {
-        switch (netType) {
-            case WIFI:
-                Log.e(getClass().getSimpleName(), "WIFI ");
-                break;
-            case CMNET:
-                Log.e(getClass().getSimpleName(), "CMNET ");
-                break;
-            case CMWAP:
-                Log.e(getClass().getSimpleName(), "CMWAP ");
-                break;
-            case NONE:
-                Log.e(getClass().getSimpleName(), "NONE ");
-                break;
-            default:
-        }
-    }
+//    @Net
+//    public void netWork(NetType netType) {
+//        switch (netType) {
+//            case WIFI:
+//                Log.e(getClass().getSimpleName(), "WIFI ");
+//                break;
+//            case CMNET:
+//                Log.e(getClass().getSimpleName(), "CMNET ");
+//                break;
+//            case CMWAP:
+//                Log.e(getClass().getSimpleName(), "CMWAP ");
+//                break;
+//            case NONE:
+//                Log.e(getClass().getSimpleName(), "NONE ");
+//                break;
+//            default:
+//        }
+//    }
 
     @Override
     public void onResume() {
@@ -240,7 +236,6 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        NetChangerManager.getDefault().registerObserver(this);
     }
 
     @Override

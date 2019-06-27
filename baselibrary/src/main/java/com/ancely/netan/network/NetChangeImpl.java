@@ -25,7 +25,7 @@ public class NetChangeImpl {
 
     private Map<Object, List<MethodManager>> networkList;
 
-    public NetChangeImpl() {
+    NetChangeImpl() {
         networkList = new HashMap<>();
     }
 
@@ -134,6 +134,5 @@ public class NetChangeImpl {
             networkList.clear();
         }
         Log.e("NetworkConnectChanged", "注销所有的监听");
-
     }
 }

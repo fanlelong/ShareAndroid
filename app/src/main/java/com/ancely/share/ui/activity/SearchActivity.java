@@ -33,7 +33,6 @@ import com.ancely.share.views.FlowLayout;
 
 import java.util.List;
 
-import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -67,20 +66,13 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
 
     @Override
     protected void initDatas() {
+
+        List<HotTipsBean> hotTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHotAll();
+        addTextView(mActSearchHotFll, hotTips, R.color.color_99ffe62e3d, R.color.color_e62e3d);
+
         mModelP.startRequestService();
-        Single<List<HotTipsBean>> hotTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHotAll();
-        mModelP.disposable(hotTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(historyHotTips -> {
-            addTextView(mActSearchHotFll, historyHotTips, R.color.color_99ffe62e3d, R.color.color_e62e3d);
-
-        }));
-        Flowable<List<HotTipsBean>> historyTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHistoryAll();
-
-        mModelP.disposable(historyTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(historyHotTips -> {
-            if (historyHotTips.size() > 16) {
-                AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().deleteHistoryTip(historyHotTips.get(historyHotTips.size() - 1));
-            }
-            addTextView(mActSearchHistoryFll, historyHotTips, R.color.color_99ff0f66cc, R.color.color_0f66cc);
-        }));
+        List<HotTipsBean> historyTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHistoryAll();
+        addTextView(mActSearchHistoryFll, historyTips, R.color.color_99ff0f66cc, R.color.color_0f66cc);
     }
 
     @Override
@@ -169,11 +161,17 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
             public boolean onQueryTextSubmit(String s) {//键盘搜索点击事件
 
                 List<HotTipsBean> historyForName = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHistoryForName(s);
+
                 if (historyForName.size() == 0) {
                     HotTipsBean bean = new HotTipsBean();
                     bean.setName(s);
                     bean.setLinkType(1);
+                    List<HotTipsBean> historyHotTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHistoryAll();
+                    if (historyHotTips.size() > 16) {
+                        AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().deleteHistoryTip(historyHotTips.get(historyHotTips.size() - 1));
+                    }
                     AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().insert(bean);
+                    addTextView(mActSearchHistoryFll, historyHotTips, R.color.color_99ff0f66cc, R.color.color_0f66cc);
                 }
                 Bundle bundle = new Bundle();
                 bundle.putString("searchName", s);
@@ -191,11 +189,7 @@ public class SearchActivity extends BaseActivity<HotTipsVM, List<HotTipsBean>> {
 
     @Override
     public void accessSuccess(ResponseBean<HttpResult<List<HotTipsBean>>> responseBean) {
-        Single<List<HotTipsBean>> hotTips = AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().getHotAll();
-        mModelP.disposable(hotTips.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(historyHotTips -> {
-            addTextView(mActSearchHotFll, historyHotTips, R.color.color_99ffe62e3d, R.color.color_e62e3d);
-
-        }));
+        addTextView(mActSearchHotFll, responseBean.body.getData(), R.color.color_99ffe62e3d, R.color.color_e62e3d);
     }
 
     private void addTextView(FlowLayout flowLayout, List<HotTipsBean> hotTips, int textColor, int strokeColor) {

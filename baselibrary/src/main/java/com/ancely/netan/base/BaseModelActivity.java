@@ -176,7 +176,7 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        NetChangerManager.getDefault().registerObserver(this);
+        NetChangerManager.getDefault().unRegisterObserver(this);
         if (mNetWorkConnectReceiver != null) {
             unregisterReceiver(mNetWorkConnectReceiver);
         }
