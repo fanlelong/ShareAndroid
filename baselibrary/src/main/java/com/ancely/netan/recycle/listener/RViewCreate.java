@@ -13,17 +13,17 @@ import com.ancely.netan.recycle.base.RViewAdapter;
  *  @描述：    创建RViewHelper所需要的数据,
  */
 public interface RViewCreate<T> {
-    SwipeRefreshLayout createSwipeRefresh();
+    SwipeRefreshLayout createSwipeRefresh();//创建下拉更新数据
 
     int[] colorResIds();//下拉刷新颜色
 
-    RecyclerView createRecycleView();
+    RecyclerView createRecycleView();//创建/设置RecycleView
 
-    RViewAdapter<T> createRecycleViewAdapter();
+    RViewAdapter<T> createRecycleViewAdapter();//创建适配器
 
-    RecyclerView.LayoutManager createLayoutManager();
+    RecyclerView.LayoutManager createLayoutManager();//设置RecycleView layoutmanager
 
-    RecyclerView.ItemDecoration createItemDecoration();
+    RecyclerView.ItemDecoration createItemDecoration();//RecycleView分割线
 
     int startPageNum();//开始页码
 

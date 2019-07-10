@@ -31,7 +31,6 @@ public class LifeManager implements LifecycleListener {
 
     @Override
     public void onStart() {
-
     }
 
     @Override

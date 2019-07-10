@@ -24,7 +24,7 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
     private final RecyclerView mRecycleView;
     private final int mStartPageNum;
     private final int mPageSize;
-    private boolean mSupportPaging;
+    private boolean mSupportPaging;//是否支持分页
     private final RecyclerView.LayoutManager mLayoutManager;
     private final RViewAdapter<T> mRecycleViewAdapter;
     private final SwipeRefreshHelper.SwipeRefreshListener listener;

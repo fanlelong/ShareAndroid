@@ -183,8 +183,6 @@ public class RViewAdapter<T> extends RecyclerView.Adapter<RViewHolder> {
     /**
      * 传入postion判断是否是footerview
      *
-     * @param position
-     * @return
      */
     public boolean isFooterViewPos(int position) {//举例， 2个头，2个inner，pos 0 1 2 3 ,false,4+true
         return position >= datas.size() + getHeaderViewCount();

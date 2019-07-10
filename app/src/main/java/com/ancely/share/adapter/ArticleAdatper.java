@@ -26,7 +26,6 @@ import java.util.List;
  *  @文件名:   HomeAdatper
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/2 3:48 PM
- *  @描述：    TODO
  */
 public class ArticleAdatper extends RViewAdapter<Article> {
 
@@ -93,11 +92,9 @@ public class ArticleAdatper extends RViewAdapter<Article> {
             return;
         }
         mLooperView = holder.getView(R.id.frag_home_banner);
-        mLooperView.setOnBannerItemClick(new AutoLooperView.BannerItemClick() {
-            @Override
-            public void onBannerItemClick(int position) {
-                Toast.makeText(ShareApplication.getInstance(), "position " + position + "--" + homeBanners.get(position).getTitle(), Toast.LENGTH_SHORT).show();
-            }
+        mLooperView.setOnBannerItemClick(position1 -> {
+            Toast.makeText(ShareApplication.getInstance(), "position " + position1 + "--" + homeBanners.get(position1).getTitle(), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(ShareApplication.getInstance(), "position " + position1 + "--" + homeBanners.get(position1).getTitle(), Toast.LENGTH_SHORT).show();
         });
 
         AutoLooperAdapter<HomeBanner> autoLooperAdapter = new AutoLooperAdapter<HomeBanner>(homeBanners) {

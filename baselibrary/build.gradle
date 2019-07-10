@@ -80,7 +80,7 @@ dependencies {
     androidTestImplementation "android.arch.navigation:navigation-testing:$nav_version"
 
 }
-//添加 e582ad69ea41c4cfc134205ec3f33376846bdc68
+//添加 fe582ad69ea41c4cfc134205ec3f33376846bdc68
 publish {
     userOrg = 'fanlelong'//bintray.com你的用户名
     groupId = 'com.ancely.netan'//jcenter上的路径
@@ -90,4 +90,4 @@ publish {
     website = 'https://github.com/fanlelong'
 //网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }
-//./gradlew clean build bintrayUpload -PbintrayUser=fanlelong -PbintrayKey=e582ad69ea41c4cfc134205ec3f33376846bdc68 -PdryRun=false
+//./gradlew clean build bintrayUpload -PbintrayUser=fanlelong -PbintrayKey=fe582ad69ea41c4cfc134205ec3f33376846bdc68 -PdryRun=false

@@ -234,11 +234,6 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     protected void resevierRequest() {
         mModelP.rerequest();
     }

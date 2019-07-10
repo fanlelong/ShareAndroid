@@ -25,7 +25,8 @@ import java.util.List;
  *  @包名：    com.ancely.share.base
  *  @文件名:   RViewFragment
  *  @创建者:   fanlelong
- *  @创建时间:  2019/6/2 3:40 PM
+ *  @创建时间: 2019/6/2 3:40 PM
+ *  @描述:    自带RecycleView
  */
 public abstract class RViewFragment<VM extends BaseResultVM<T>, T, B> extends BaseFragment<VM, T> implements RViewCreate<B>, SwipeRefreshHelper.SwipeRefreshListener, RViewScrollListener {
     private RViewHelper<B> mHelper;
@@ -33,7 +34,7 @@ public abstract class RViewFragment<VM extends BaseResultVM<T>, T, B> extends Ba
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mHelper = new RViewHelper.Builder<>(this, this, this).build();
+        mHelper = new RViewHelper.Builder<>(this, this, this).build();//初始化RecycleView帮助类
         progressView.setVisibility(View.GONE);
         progressView.setOnClickListener(v -> {
             if (!isResevierrequest) {

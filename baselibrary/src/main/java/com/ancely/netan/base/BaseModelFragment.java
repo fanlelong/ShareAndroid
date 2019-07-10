@@ -34,8 +34,8 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
     protected View mContentView;
     protected Context mContext;
     protected VM mViewModel;
-    protected Map<String, Object> mParams = new HashMap<>();
-    protected boolean mIsFirstInto;
+    protected Map<String, Object> mParams = new HashMap<>();//请求参数
+    protected boolean mIsFirstInto;//是否是第一次进入视图
 
     @Override
     public void onAttach(Context context) {
@@ -104,18 +104,13 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
         return (V) mContentView.findViewById(id);
     }
 
-    protected abstract void loadData();
+    protected abstract void loadData();//加载数据
 
-    protected abstract void initView();
+    protected abstract void initView();//初始化视图
 
-    protected abstract void initEvent();
+    protected abstract void initEvent();//设置点击事件
 
-    protected abstract int getContentView();
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+    protected abstract int getContentView();//调车容器View
 
 
     @Override
@@ -132,6 +127,11 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
 
     }
 
+    /**
+     * 请求错误
+     *
+     * @param errBean 错误信息bean类
+     */
     @Override
     public void accessError(RequestErrBean errBean) {
         Toast.makeText(mContext, errBean.msg, Toast.LENGTH_SHORT).show();
@@ -139,6 +139,8 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
 
     /**
      * 请求数据成功
+     *
+     * @param responseBean 请求成功信息bean类
      */
     @Override
     public void accessSuccess(ResponseBean<T> responseBean) {
@@ -146,6 +148,8 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
 
     /**
      * 请求加载更多数据居功
+     *
+     * @param responseBean 请求加载更多成功信息bean类
      */
     @Override
     public void accessMoreSuccess(ResponseBean<T> responseBean) {
