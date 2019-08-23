@@ -10,6 +10,7 @@ package com.ancely.netan.request.mvvm;
 
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
@@ -20,8 +21,6 @@ import com.ancely.netan.request.exception.ApiException;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.netan.utils.NetUtils;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,7 +57,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     }
 
 
-    public ModelP(@NotNull Fragment fragment, Class<? extends BaseViewModel<T>> clazz) {
+    public ModelP(@NonNull Fragment fragment, Class<? extends BaseViewModel<T>> clazz) {
         mBaseViewModel = ViewModelProviders.of(fragment).get(clazz);
         registerObserver(mBaseViewModel, fragment);
         NetWorkManager.getInstance().getRequestManagerRetriever().get(fragment, this);
@@ -103,6 +102,9 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
     }
 
 
+    /**
+     * @param isAddRetry 无网-->有网  是否需要重新请求: 有些场景是不需要的 比如点击收藏
+     */
     public void startRequestService(Map<String, Object> params, int flag, boolean isShowLoading, boolean isAddRetry) {
 
         if (params == null) {
@@ -146,7 +148,6 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
      * 请求之前可以做一些操作
      */
     public void start(Map<String, Object> map, int flag, boolean isShowLoading) {
-
     }
 
     private void sendRequestToServer(R request, Observable<T> netObservable, int flag, Map<String, Object> params, boolean showLoading, boolean isRetry) {
@@ -179,6 +180,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
                     if (handlerDataFlag) {
                         return;
                     }
+
                     if (flag == ModelP.IS_LOADING_MORE_DATA) {
                         accessMoreSuccess(responseBean, flag, isShowLoading);
                     } else {
@@ -266,6 +268,7 @@ public abstract class ModelP<T, R> implements IBaseModelP<T> {
      * 请求成功后,可对请求回来的数据进行一些操作
      *
      * @param responseBean 组装的数据
+     * @return true: 自己处理
      */
     public boolean hanlerDataRequestSuccess(ResponseBean<T> responseBean) {
         return false;

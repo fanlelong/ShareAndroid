@@ -27,7 +27,6 @@ import java.util.List;
  *  @文件名:   SearchListFragment
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/9 1:50 PM
- *  @描述：    TODO
  */
 public class SearchListFragment extends RViewFragment<HomeVM, HomeBean, Article> {
 
@@ -87,6 +86,11 @@ public class SearchListFragment extends RViewFragment<HomeVM, HomeBean, Article>
     }
 
     @Override
+    protected Class<HomeVM> initClazz() {
+        return HomeVM.class;
+    }
+
+    @Override
     public boolean isNeedCheckNetWork() {
         return false;
     }
@@ -102,7 +106,7 @@ public class SearchListFragment extends RViewFragment<HomeVM, HomeBean, Article>
     }
 
     @Override
-    public RViewAdapter createRecycleViewAdapter() {
+    public RViewAdapter<Article> createRecycleViewAdapter() {
         return mAdatper;
     }
 

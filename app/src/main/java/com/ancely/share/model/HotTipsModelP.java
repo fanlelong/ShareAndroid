@@ -2,14 +2,15 @@ package com.ancely.share.model;
 
 import android.support.v4.app.FragmentActivity;
 
+import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.share.ShareApi;
 import com.ancely.share.ShareApplication;
 import com.ancely.share.base.BaseModelP;
-import com.ancely.share.base.BaseResultVM;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.HotTipsBean;
 import com.ancely.share.database.AppDatabase;
+import com.ancely.share.viewmodel.HotTipsVM;
 
 import java.util.List;
 import java.util.Map;
@@ -22,13 +23,15 @@ import io.reactivex.Observable;
  *  @文件名:   HotTipsModelP
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/5 4:28 PM
- *  @描述：    TODO
+ *  @描述：    热门标签
  */
 public class HotTipsModelP extends BaseModelP<List<HotTipsBean>> {
 
-    public HotTipsModelP(FragmentActivity activity, Class<? extends BaseResultVM<List<HotTipsBean>>> clazz) {
+    public HotTipsModelP(FragmentActivity activity, Class<HotTipsVM> clazz) {
         super(activity, clazz);
     }
+
+
 
     @Override
     protected Observable<HttpResult<List<HotTipsBean>>> getObservable(ShareApi request, Map<String, Object> map, int flag) {
@@ -39,6 +42,8 @@ public class HotTipsModelP extends BaseModelP<List<HotTipsBean>> {
     public boolean hanlerDataRequestSuccess(ResponseBean<HttpResult<List<HotTipsBean>>> responseBean) {
         AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().deleteHotTips();
         AppDatabase.getInstance(ShareApplication.getInstance()).getHotTipsDao().insertAll(responseBean.body.getData());
+
+//        getBaseViewModel().hanlerDataRequestSuccess(responseBean);
         return super.hanlerDataRequestSuccess(responseBean);
     }
 }

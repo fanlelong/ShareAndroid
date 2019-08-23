@@ -144,6 +144,7 @@ public class RViewHolder extends RecyclerView.ViewHolder {
         view.setTextColor(textColor);
         return this;
     }
+
     public RViewHolder setTextColorRes(int viewId, int colorRes) {
         TextView view = getView(viewId);
         view.setTextColor(mContentView.getResources().getColor(colorRes));
@@ -243,23 +244,23 @@ public class RViewHolder extends RecyclerView.ViewHolder {
 
     /**
      * 关于事件的
+     * @param viewId id
+     * @param listener 监听
+     * @return 返回自身
      */
-    public RViewHolder setOnClickListener(int viewId,
-                                          View.OnClickListener listener) {
+    public RViewHolder setOnClickListener(int viewId, View.OnClickListener listener) {
         View view = getView(viewId);
         view.setOnClickListener(listener);
         return this;
     }
 
-    public RViewHolder setOnTouchListener(int viewId,
-                                          View.OnTouchListener listener) {
+    public RViewHolder setOnTouchListener(int viewId, View.OnTouchListener listener) {
         View view = getView(viewId);
         view.setOnTouchListener(listener);
         return this;
     }
 
-    public RViewHolder setOnLongClickListener(int viewId,
-                                              View.OnLongClickListener listener) {
+    public RViewHolder setOnLongClickListener(int viewId, View.OnLongClickListener listener) {
         View view = getView(viewId);
         view.setOnLongClickListener(listener);
         return this;
@@ -268,7 +269,7 @@ public class RViewHolder extends RecyclerView.ViewHolder {
     /**
      * 隐藏或展示Item
      *
-     * @param visible
+     * @param visible true为visible false为gone
      */
     public void setItemVisible(boolean visible) {
         View v = getContentView();

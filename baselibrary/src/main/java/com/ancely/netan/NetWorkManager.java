@@ -79,8 +79,10 @@ public class NetWorkManager {
 
     /**
      * 初始化必要对象和参数
+     * @param host  域名
+     * @param context 上下文
+     * @return 请求管理器
      */
-
     public NetWorkManager init(String host, Context context) {
         return init(host, null, context);
     }

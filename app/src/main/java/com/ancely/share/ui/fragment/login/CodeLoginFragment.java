@@ -55,6 +55,11 @@ public class CodeLoginFragment extends BaseFragment {
     }
 
     @Override
+    protected Class initClazz() {
+        return null;
+    }
+
+    @Override
     public boolean isNeedCheckNetWork() {
         return false;
     }

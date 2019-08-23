@@ -36,6 +36,13 @@ android {
             }
         }
     }
+
+    task javadoc(type: Javadoc) {
+        options.encoding = "utf-8"
+    }
+//    tasks.getByPath(":baselibrary:mavenAndroidJavadocs").enabled = false
+
+
 }
 
 dependencies {
@@ -78,16 +85,16 @@ dependencies {
     api "android.arch.navigation:navigation-fragment:$nav_version"
     api "android.arch.navigation:navigation-ui:$nav_version"
     androidTestImplementation "android.arch.navigation:navigation-testing:$nav_version"
-
+    api 'org.aspectj:aspectjrt:1.8.13'
 }
 //添加 fe582ad69ea41c4cfc134205ec3f33376846bdc68
 publish {
     userOrg = 'fanlelong'//bintray.com你的用户名
     groupId = 'com.ancely.netan'//jcenter上的路径
     artifactId = 'baselibrary'//项目名称
-    publishVersion = '1.0.0'//版本号
+    publishVersion = '1.0.1'//版本号
     desc = 'net request'//描述，不重要
-    website = 'https://github.com/fanlelong'
+    website = 'https://github.com/fanlelong/ShareAndroid.git'
 //网站，不重要；尽量模拟github上的地址，例如我这样的；当然你有地址最好了
 }
 //./gradlew clean build bintrayUpload -PbintrayUser=fanlelong -PbintrayKey=fe582ad69ea41c4cfc134205ec3f33376846bdc68 -PdryRun=false

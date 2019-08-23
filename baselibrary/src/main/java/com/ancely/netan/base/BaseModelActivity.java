@@ -201,9 +201,6 @@ public abstract class BaseModelActivity<VM extends BaseViewModel<T>, T> extends 
     public void accessError(RequestErrBean errBean) {
     }
 
-    @Override
-    public void accessSuccess(ResponseBean<T> responseBean) {
-    }
 
     @Override
     public void accessMoreSuccess(ResponseBean<T> responseBean) {

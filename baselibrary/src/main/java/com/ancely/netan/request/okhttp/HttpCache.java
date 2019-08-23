@@ -8,7 +8,6 @@ import okhttp3.Cache;
 
 /**
  * Created by Horrarndoo on 2017/9/12.
- * <p>
  */
 public class HttpCache {
 

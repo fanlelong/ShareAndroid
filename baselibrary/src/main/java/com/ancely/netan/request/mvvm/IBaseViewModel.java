@@ -11,7 +11,7 @@ import com.ancely.netan.request.mvvm.bean.ResponseBean;
  *  @创建者:   fanlelong
  *  @创建时间:  2019/5/15 7:14 PM
  */
-interface IBaseViewModel<T> {
+interface  IBaseViewModel<T> {
     void hanlerDataRequestSuccess(ResponseBean<T> t);
 
     MutableLiveData<ResponseBean<T>> getResultLiveData();

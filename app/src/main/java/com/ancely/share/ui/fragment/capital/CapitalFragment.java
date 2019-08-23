@@ -3,7 +3,6 @@ package com.ancely.share.ui.fragment.capital;
 import com.ancely.share.R;
 import com.ancely.share.base.BaseFragment;
 import com.ancely.share.bean.PieData;
-import com.ancely.share.views.chart.PieChart;
 import com.ancely.share.views.chart.PieChartView;
 import com.ancely.share.views.test.BrokenLineView;
 import com.ancely.share.views.test.ChartBean;
@@ -89,6 +88,11 @@ public class CapitalFragment extends BaseFragment {
     protected int getContentView() {
 
         return R.layout.fragment_capital;
+    }
+
+    @Override
+    protected Class initClazz() {
+        return null;
     }
 
     @Override

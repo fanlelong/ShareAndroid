@@ -3,14 +3,7 @@ package com.ancely.share;
 import android.app.Application;
 
 import com.ancely.netan.NetWorkManager;
-import com.ancely.share.others.HeaderInterceptor;
-import com.ancely.share.others.SaveCookieInterceptor;
 import com.squareup.leakcanary.LeakCanary;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import okhttp3.Interceptor;
 
 /*
  *  @项目名：  ShareAndroid
@@ -37,9 +30,9 @@ public class ShareApplication extends Application {
             return;
         }
         LeakCanary.install(this);
-        List<Interceptor> interceptors = new ArrayList<>();
-        interceptors.add(new HeaderInterceptor());
-        interceptors.add(new SaveCookieInterceptor());
-        NetWorkManager.getInstance().init("https://www.wanandroid.com/", interceptors, this);
+//        List<Interceptor> interceptors = new ArrayList<>();
+//        interceptors.add(new HeaderInterceptor());
+//        interceptors.add(new SaveCookieInterceptor());
+        NetWorkManager.getInstance().init("https://www.wanandroid.com/", null, this);
     }
 }

@@ -1,6 +1,7 @@
 package com.ancely.share.model;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.ancely.netan.request.exception.ApiException;
@@ -18,7 +19,6 @@ import com.ancely.share.database.AppDatabase;
 import com.ancely.share.utils.RequestCode;
 import com.ancely.share.viewmodel.HomeVM;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class HomeModelP extends BaseModelP<HomeBean> {
 
     private Fragment mFragment;
 
-    public HomeModelP(@NotNull Fragment fragment, Class<? extends BaseResultVM<HomeBean>> clazz) {
+    public HomeModelP(@NonNull Fragment fragment, Class<? extends BaseResultVM<HomeBean>> clazz) {
         super(fragment, clazz);
         mFragment = fragment;
     }

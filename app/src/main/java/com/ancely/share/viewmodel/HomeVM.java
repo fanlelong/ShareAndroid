@@ -2,7 +2,9 @@ package com.ancely.share.viewmodel;
 
 import android.arch.lifecycle.MediatorLiveData;
 
+import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.share.base.BaseResultVM;
+import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.HomeBanner;
 import com.ancely.share.bean.HomeBean;
 import com.ancely.share.bean.HomeCollectBean;
@@ -39,4 +41,8 @@ public class HomeVM extends BaseResultVM<HomeBean> {
     private MediatorLiveData<HomeCollectBean> colleclLiveData;
 
 
+    @Override
+    public void hanlerDataRequestSuccess(ResponseBean<HttpResult<HomeBean>> t) {
+
+    }
 }

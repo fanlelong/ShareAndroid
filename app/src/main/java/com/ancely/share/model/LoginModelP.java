@@ -1,5 +1,6 @@
 package com.ancely.share.model;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 
 import com.ancely.share.ShareApi;
@@ -8,7 +9,6 @@ import com.ancely.share.base.HttpResult;
 import com.ancely.share.base.BaseResultVM;
 import com.ancely.share.bean.LoginBean;
 
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -25,7 +25,7 @@ import io.reactivex.Observable;
 public class LoginModelP extends BaseModelP<LoginBean> {
 
 
-    public LoginModelP(@NotNull Fragment fragment, Class<? extends BaseResultVM<LoginBean>> clazz) {
+    public LoginModelP(@NonNull Fragment fragment, Class<? extends BaseResultVM<LoginBean>> clazz) {
         super(fragment, clazz);
     }
 

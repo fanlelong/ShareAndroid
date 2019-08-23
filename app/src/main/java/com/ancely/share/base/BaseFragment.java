@@ -20,7 +20,6 @@ import com.ancely.share.R;
  *  @文件名:   BaseFragment
  *  @创建者:   fanlelong
  *  @创建时间:  2019/6/6 11:19 AM
- *  @描述：    TODO
  */
 public abstract class BaseFragment<VM extends BaseResultVM<T>, T> extends BaseModelFragment<VM, HttpResult<T>> {
     protected FrameLayout progressView;

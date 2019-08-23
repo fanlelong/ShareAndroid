@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.share.MainActivity;
 import com.ancely.share.R;
+import com.ancely.share.animation.ClickBehavior;
 import com.ancely.share.base.BaseFragment;
 import com.ancely.share.base.HttpResult;
 import com.ancely.share.bean.LoginBean;
@@ -19,6 +20,8 @@ import com.ancely.share.utils.PreferenceUtils;
 import com.ancely.share.viewmodel.LoginVM;
 import com.ancely.share.views.StrakeOutEditText;
 
+import java.util.Objects;
+
 import androidx.navigation.Navigation;
 
 /*
@@ -27,7 +30,7 @@ import androidx.navigation.Navigation;
  *  @文件名:   LoginFragment
  *  @创建者:   fanlelong
  *  @创建时间:  2019/5/31 3:23 PM
- *  @描述：    TODO
+ *  @描述：    登陆
  */
 public class LoginFragment extends BaseFragment<LoginVM, LoginBean> implements StrakeOutEditText.EditextChangedListener {
     private LoginModelP mModelP;
@@ -69,10 +72,16 @@ public class LoginFragment extends BaseFragment<LoginVM, LoginBean> implements S
     }
 
     @Override
+    protected Class<LoginVM> initClazz() {
+        return LoginVM.class;
+    }
+
+    @Override
     public boolean isNeedCheckNetWork() {
         return false;
     }
 
+    @ClickBehavior("登陆")
     private void login() {
         if (TextUtils.isEmpty(mFragLoginUsername.getEditext())) {
             Toast.makeText(mContext, R.string.login_accound_error_tips, Toast.LENGTH_SHORT).show();
@@ -113,10 +122,10 @@ public class LoginFragment extends BaseFragment<LoginVM, LoginBean> implements S
         super.accessSuccess(responseBean);
         LoginBean loginBean = responseBean.body.getData();
         PreferenceUtils.saveString("userId", String.valueOf(loginBean.getId()));
-        PreferenceUtils.saveString( "userName", loginBean.getUsername());
-        PreferenceUtils.saveBoolean( "userName", true);
+        PreferenceUtils.saveString("userName", loginBean.getUsername());
+        PreferenceUtils.saveBoolean("userName", true);
         startActivity(new Intent(getContext(), MainActivity.class));
-        getActivity().finish();
+        Objects.requireNonNull(getActivity()).finish();
     }
 
     @Override

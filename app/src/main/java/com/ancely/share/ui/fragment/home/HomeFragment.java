@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.ancely.netan.network.NetChangerManager;
 import com.ancely.netan.recycle.base.RViewAdapter;
 import com.ancely.netan.recycle.listener.ItemListener;
 import com.ancely.netan.request.mvvm.ModelP;
@@ -128,6 +127,11 @@ public class HomeFragment extends RViewFragment<HomeVM, HomeBean, Article> {
     @Override
     protected int getContentView() {
         return R.layout.fragment_home;
+    }
+
+    @Override
+    protected Class<HomeVM> initClazz() {
+        return HomeVM.class;
     }
 
     @Override

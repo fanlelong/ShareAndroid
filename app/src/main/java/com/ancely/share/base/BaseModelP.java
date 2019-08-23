@@ -1,13 +1,14 @@
 package com.ancely.share.base;
 
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.ModelP;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 import com.ancely.share.ShareApi;
 
-import org.jetbrains.annotations.NotNull;
 
 /*
  *  @项目名：  ShareAndroid
@@ -19,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 public abstract class BaseModelP<T> extends ModelP<HttpResult<T>, ShareApi> {
 
 
-    public BaseModelP(@NotNull Fragment fragment, Class<? extends BaseResultVM<T>> clazz) {
+    public BaseModelP(@NonNull Fragment fragment, Class<? extends BaseResultVM<T>> clazz) {
         super(fragment, clazz);
     }
 
@@ -41,6 +42,7 @@ public abstract class BaseModelP<T> extends ModelP<HttpResult<T>, ShareApi> {
     public void hideProgress(int flag) {
 
     }
+
 
     @Override
     public boolean hanlerDataRequestSuccess(ResponseBean<HttpResult<T>> responseBean) {

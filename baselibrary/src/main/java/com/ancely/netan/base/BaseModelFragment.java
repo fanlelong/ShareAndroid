@@ -15,8 +15,6 @@ import com.ancely.netan.request.mvvm.BaseViewModel;
 import com.ancely.netan.request.mvvm.bean.RequestErrBean;
 import com.ancely.netan.request.mvvm.bean.ResponseBean;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,17 +52,12 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
     @SuppressWarnings("unchecked")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mContentView = inflater.inflate(getContentView(), container, false);
-        Type type = getClass().getGenericSuperclass();
-        if (type instanceof ParameterizedType) {
-            ParameterizedType pType = (ParameterizedType) type;
-            Type claz = pType.getActualTypeArguments()[0];
-            if (claz instanceof Class) {
-                Class<VM> clazz = (Class<VM>) claz;
-                mViewModel = ViewModelProviders.of(this).get(clazz);
-                initObserveDatas();
-            }
-        }
 
+        Class<VM> clazz = initClazz();
+        if (clazz != null) {
+            mViewModel = ViewModelProviders.of(this).get(clazz);
+            initObserveDatas();
+        }
         return mContentView;
 
     }
@@ -112,6 +105,7 @@ public abstract class BaseModelFragment<VM extends BaseViewModel<T>, T> extends 
 
     protected abstract int getContentView();//调车容器View
 
+    protected abstract Class<VM> initClazz();
 
     @Override
     public void onClick(View v) {

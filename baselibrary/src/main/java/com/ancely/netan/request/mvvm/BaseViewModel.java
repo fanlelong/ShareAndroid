@@ -27,7 +27,7 @@ public class BaseViewModel<T> extends ViewModel implements IBaseViewModel<T> {
     private MutableLiveData<RequestErrBean> errorLiveData;
     private MutableLiveData<Integer> showLoadingLiveData;
     private MutableLiveData<Integer> hideLoadingLiveData;
-        private LiveData<PagedList<Object>> mPagedListLiveData;
+    private LiveData<PagedList<Object>> mPagedListLiveData;
     private final Gson mGson = new Gson();
 
 
@@ -43,7 +43,7 @@ public class BaseViewModel<T> extends ViewModel implements IBaseViewModel<T> {
         return resultLiveData;
     }
 
-        public LiveData<PagedList<Object>> getPagedListLiveData(){
+    public LiveData<PagedList<Object>> getPagedListLiveData() {
 
         if (null == mPagedListLiveData) {
             PagedList.Config config = new PagedList.Config.Builder().setPageSize(20).setPrefetchDistance(2).setInitialLoadSizeHint(14)
@@ -54,6 +54,7 @@ public class BaseViewModel<T> extends ViewModel implements IBaseViewModel<T> {
 
         return mPagedListLiveData;
     }
+
     @Override
     public MutableLiveData<ResponseBean<T>> getMoreLiveData() {
         if (null == moreLiveData) {
@@ -88,6 +89,5 @@ public class BaseViewModel<T> extends ViewModel implements IBaseViewModel<T> {
 
     @Override
     public void hanlerDataRequestSuccess(ResponseBean<T> t) {
-
     }
 }

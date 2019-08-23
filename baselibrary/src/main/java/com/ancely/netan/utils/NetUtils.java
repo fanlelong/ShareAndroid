@@ -16,7 +16,9 @@ import com.ancely.netan.network.NetType;
 
 public class NetUtils {
     /**
-     * 判断网络是否连接 * @param context * @return
+     * 判断网络是否连接
+     * @param context  上下文
+     * @return true: 有网; false:无网;
      */
     public static boolean isConnected(Context context) {
         ConnectivityManager connectivity = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);

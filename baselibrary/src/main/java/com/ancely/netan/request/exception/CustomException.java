@@ -50,7 +50,7 @@ public class CustomException {
             return ex;
         } else if (e instanceof UnknownHostException || e instanceof SocketTimeoutException) {
             //连接错误
-            ex = new ApiException(NETWORK_ERROR, e.getMessage());
+            ex = new ApiException(HTTP_ERROR, e.getMessage());
             return ex;
         } else {
             //未知错误

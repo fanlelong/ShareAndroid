@@ -97,6 +97,7 @@ public class RViewHelper<T> extends RecyclerView.OnScrollListener {
 
     /**
      * 更新全部 包括headers and foots
+     * @param datas 数据源
      */
     public void notifyAdapterDataSetChanged(List<T> datas) {
         if (datas == null) return;

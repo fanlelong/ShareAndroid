@@ -1,6 +1,17 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'android-aspectjx'
+//3.2.1  4.6-all
 android {
+//    buildscript {
+//        repositories {
+//            mavenCentral()
+//        }
+//        dependencies {
+//            classpath 'org.aspectj:aspectjtools:1.8.9'
+//            classpath 'org.aspectj:aspectjweaver:1.8.9'
+//        }
+//    }
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.ancely.share"
